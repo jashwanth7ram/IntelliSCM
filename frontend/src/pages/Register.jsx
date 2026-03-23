@@ -101,7 +101,7 @@ export default function Register() {
           </form>
 
           <div className="text-center mt-8 text-sm text-textMuted">
-            Already verified? <Link to="/login" className="text-primary hover:text-white transition-colors font-semibold ml-1">Access Protocol</Link>
+            Already verified? <Link to="/login" className="text-primary hover:text-white transition-colors font-semibold ml-1">Sign in</Link>
           </div>
         </div>
       </div>

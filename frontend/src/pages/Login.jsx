@@ -86,7 +86,7 @@ export default function Login() {
           </form>
 
           <div className="text-center mt-8 text-sm text-textMuted">
-            Unregistered Identity? <Link to="/register" className="text-primary hover:text-white transition-colors font-semibold ml-1">Establish Link</Link>
+            Unregistered Identity? <Link to="/register" className="text-primary hover:text-white transition-colors font-semibold ml-1">Register here</Link>
           </div>
         </div>
       </div>
