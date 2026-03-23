@@ -7,11 +7,11 @@ import {
 } from 'recharts'
 import { FaArrowRight } from 'react-icons/fa'
 
-const COLORS = ['#FF4500', '#222222', '#f59e0b', '#ef4444', '#8b5cf6']
+const COLORS = ['#A87FF3', '#60a5fa', '#f59e0b', '#ef4444', '#10b981']
 
 const TOOLTIP_STYLE = {
-  backgroundColor: '#0a0a0a', border: '1px solid #333',
-  borderRadius: 8, color: '#e2e8f0', fontSize: 13, textTransform: 'uppercase', fontWeight: 700
+  backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: 12, color: '#e2e8f0', fontSize: 13, fontWeight: 500, boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)'
 }
 
 export default function AdminDashboard() {
@@ -45,16 +45,15 @@ export default function AdminDashboard() {
   ]
 
   const byRisk = [
-    { name: 'Low',    value: crs.filter(c => c.riskScore === 'Low').length,    fill: '#222222' },
+    { name: 'Low',    value: crs.filter(c => c.riskScore === 'Low').length,    fill: '#10b981' },
     { name: 'Medium', value: crs.filter(c => c.riskScore === 'Medium').length, fill: '#f59e0b' },
-    { name: 'High',   value: crs.filter(c => c.riskScore === 'High').length,   fill: '#FF4500' },
+    { name: 'High',   value: crs.filter(c => c.riskScore === 'High').length,   fill: '#ef4444' },
   ]
 
   const byType = ['Feature','Bug Fix','Refactor','Security','Performance','Infrastructure'].map(t => ({
     name: t, count: crs.filter(c => c.changeType === t).length
   }))
 
-  // Monthly trend
   const monthly = {}
   crs.forEach(cr => {
     if (!cr.createdAt) return
@@ -72,93 +71,94 @@ export default function AdminDashboard() {
 
   return (
     <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
-      <div className="mb-16 pt-8">
-        <h1 className="text-5xl font-black text-white tracking-tighter uppercase mb-4">
-          SYSTEM<br/><span className="text-primary">ADMIN</span>
+      <div className="mb-12 pt-8">
+        <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-4">
+          System Overview
         </h1>
-        <p className="text-sm font-medium uppercase tracking-widest text-zinc-500">System-wide analytics, metrics, and user management.</p>
+        <p className="text-lg text-textMuted max-w-2xl leading-relaxed">
+          Monitor universal application telemetry, access control, and deployment patterns.
+        </p>
       </div>
 
       {/* KPI Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
         {[
-          { label: 'Total CRs',     value: crs.length, num: '01' },
-          { label: 'Approval Rate', value: `${approvalRate}%`, num: '02' },
-          { label: 'High Risk CRs', value: highRisk, num: '03' },
-          { label: 'Pending',       value: crs.filter(c=>c.status==='Pending').length, num: '04' },
+          { label: 'Total CRs',     value: crs.length },
+          { label: 'Approval Rate', value: `${approvalRate}%` },
+          { label: 'High Risk CRs', value: highRisk },
+          { label: 'Pending',       value: crs.filter(c=>c.status==='Pending').length },
         ].map((s, i) => (
-          <div key={i} className="bg-[#111] border border-[#222] rounded-xl p-8 hover:bg-[#161616] transition-colors relative group">
-            <div className="text-primary font-bold text-sm mb-8 bg-primary/10 w-fit px-2 py-1 rounded inline-block">{s.num}</div>
-            <div className={`text-6xl font-black mb-4 ${s.label === 'High Risk CRs' && s.value > 0 ? 'text-primary' : 'text-white'}`}>{s.value}</div>
-            <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">{s.label}</div>
-            <FaArrowRight className="absolute top-8 right-8 text-zinc-700 group-hover:text-primary transition-colors" />
+          <div key={i} className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl p-6 hover:bg-white/[0.04] transition-colors relative group">
+            <div className={`text-4xl font-black tracking-tight mb-2 ${s.label === 'High Risk CRs' && s.value > 0 ? 'text-red-400' : 'text-white'}`}>{s.value}</div>
+            <div className="text-sm font-medium text-textMuted">{s.label}</div>
+            <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/[0.02] border border-white/[0.05] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+              <FaArrowRight className="text-primary text-xs" />
+            </div>
           </div>
         ))}
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center py-32">
+        <div className="flex justify-center items-center py-20 px-6">
           <span className="loading loading-spinner text-primary loading-lg"></span>
         </div>
       ) : (
         <>
           {isReportsView ? (
           <div>
-          {/* Row 1: Trend Line + Status Pie */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="bg-[#111] border border-[#222] rounded-xl p-8">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Monthly CR Trend</h3>
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8">
+              <h3 className="text-lg font-bold text-white tracking-tight mb-8">Monthly Operations Trend</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={trend} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                  <XAxis dataKey="month" tick={{ fill: '#71717a', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#71717a', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis dataKey="month" tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Legend wrapperStyle={{ paddingTop: 20, fontSize: 12, fontWeight: 'bold' }} />
-                  <Line type="monotone" dataKey="submitted" stroke="#555" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="SUBMITTED"/>
-                  <Line type="monotone" dataKey="approved"  stroke="#FF4500" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="APPROVED"/>
+                  <Legend wrapperStyle={{ paddingTop: 20, fontSize: 12, fontWeight: 600, color: '#e2e8f0' }} />
+                  <Line type="monotone" dataKey="submitted" stroke="#ffffff" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="Requests"/>
+                  <Line type="monotone" dataKey="approved"  stroke="#A87FF3" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="Approvals"/>
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="bg-[#111] border border-[#222] rounded-xl p-8">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">CR Status Distribution</h3>
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8">
+              <h3 className="text-lg font-bold text-white tracking-tight mb-8">Request Status Allocation</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <PieChart>
                   <Pie data={byStatus} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={90} paddingAngle={5} stroke="none">
                     {byStatus.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
                   </Pie>
                   <Tooltip contentStyle={TOOLTIP_STYLE} itemStyle={{ color: '#fff' }} />
-                  <Legend wrapperStyle={{ paddingTop: 20, fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase' }} />
+                  <Legend wrapperStyle={{ paddingTop: 20, fontSize: 12, fontWeight: 600, color: '#e2e8f0' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Row 2: Bar Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
-            <div className="bg-[#111] border border-[#222] rounded-xl p-8">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Risk Level Distribution</h3>
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8">
+              <h3 className="text-lg font-bold text-white tracking-tight mb-8">System AI Risk Analysis</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={byRisk} barSize={40} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                  <XAxis dataKey="name" tick={{ fill: '#71717a', fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#71717a', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: '#161616' }} />
-                  <Bar dataKey="value" name="CRs" radius={[4,4,0,0]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis dataKey="name" tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                  <Bar dataKey="value" name="Detected Constraints" radius={[8,8,0,0]}>
                     {byRisk.map((r, i) => <Cell key={i} fill={r.fill}/>)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="bg-[#111] border border-[#222] rounded-xl p-8">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Changes by Type</h3>
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8">
+              <h3 className="text-lg font-bold text-white tracking-tight mb-8">Operation Types Filter</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={byType} barSize={32} margin={{ top: 5, right: 10, left: -20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                  <XAxis dataKey="name" tick={{ fill: '#71717a', fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase' }} angle={-30} textAnchor="end" height={50} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#71717a', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: '#161616' }} />
-                  <Bar dataKey="count" fill="#333" radius={[4,4,0,0]} name="Count"/>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis dataKey="name" tick={{ fill: '#999', fontSize: 10, fontWeight: 500 }} angle={-30} textAnchor="end" height={50} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                  <Bar dataKey="count" fill="#A87FF3" radius={[8,8,0,0]} name="Volume"/>
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -166,32 +166,29 @@ export default function AdminDashboard() {
           </div>
           ) : isUsersView ? (
           <div className="mb-16">
-            <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8">SYSTEM USERS</h2>
-            <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
+            <h2 className="text-2xl font-bold text-white tracking-tight mb-6">User Telemetry</h2>
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl overflow-hidden">
               <div className="p-0 overflow-x-auto">
                 <table className="w-full whitespace-nowrap text-left">
                   <thead>
-                    <tr className="bg-[#0a0a0a] border-b border-[#222] text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                      <th className="px-8 py-5">Name</th>
-                      <th className="px-8 py-5">Email</th>
-                      <th className="px-8 py-5">Role</th>
-                      <th className="px-8 py-5">Registered</th>
+                    <tr className="border-b border-white/[0.05] text-xs font-semibold text-textMuted uppercase tracking-wider bg-white/[0.01]">
+                      <th className="px-6 py-4">Name</th>
+                      <th className="px-6 py-4">Identity Envelope</th>
+                      <th className="px-6 py-4">Access Level</th>
+                      <th className="px-6 py-4 text-right">Provisioned On</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {users.map(u => (
-                      <tr key={u._id} className="border-b border-[#222] hover:bg-[#161616] transition-colors">
-                        <td className="px-8 py-5 font-bold text-white">{u.name}</td>
-                        <td className="px-8 py-5 text-zinc-400 font-medium">{u.email}</td>
-                        <td className="px-8 py-5"><span className="text-xs font-bold uppercase tracking-wider text-zinc-500">{u.role}</span></td>
-                        <td className="px-8 py-5 text-zinc-600 text-xs font-mono">
-                          {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
+                      <tr key={u._id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
+                        <td className="px-6 py-4 font-semibold text-white">{u.name}</td>
+                        <td className="px-6 py-4 text-textMuted">{u.email}</td>
+                        <td className="px-6 py-4"><span className="text-xs font-medium px-2.5 py-1 rounded border border-white/[0.1] bg-white/[0.02] text-zinc-300">{u.role}</span></td>
+                        <td className="px-6 py-4 text-textMuted text-right">
+                          {u.createdAt ? new Date(u.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                         </td>
                       </tr>
                     ))}
-                    {users.length === 0 && (
-                      <tr><td colSpan={4} className="text-center py-16 text-xs font-bold uppercase tracking-widest text-zinc-600">No users found.</td></tr>
-                    )}
                   </tbody>
                 </table>
               </div>
@@ -202,27 +199,30 @@ export default function AdminDashboard() {
           {/* High Risk CRs Alert */}
           {highRisk > 0 && (
             <div className="mb-16">
-              <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8"><span className="text-primary">HIGH RISK</span> CHANGES</h2>
-              <div className="bg-[#ff4500]/5 border border-[#ff4500]/20 rounded-xl overflow-hidden">
+              <h2 className="text-2xl font-bold text-white tracking-tight mb-6 flex items-center gap-3">
+                <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                Critical Priority Overrides
+              </h2>
+              <div className="bg-red-500/5 backdrop-blur-xl border border-red-500/20 rounded-2xl overflow-hidden">
                 <div className="p-0 overflow-x-auto">
                   <table className="w-full whitespace-nowrap text-left">
                     <thead>
-                      <tr className="bg-[#ff4500]/10 border-b border-[#ff4500]/20 text-[10px] font-bold text-primary uppercase tracking-widest">
-                        <th className="px-8 py-5">Title</th>
-                        <th className="px-8 py-5">Type</th>
-                        <th className="px-8 py-5">Priority</th>
-                        <th className="px-8 py-5">Impact</th>
-                        <th className="px-8 py-5">Status</th>
+                      <tr className="border-b border-red-500/20 text-xs font-semibold text-red-300 uppercase tracking-wider bg-red-500/10">
+                        <th className="px-6 py-4">Pipeline Subject</th>
+                        <th className="px-6 py-4">Structure</th>
+                        <th className="px-6 py-4">Priority Layer</th>
+                        <th className="px-6 py-4">Impact Field</th>
+                        <th className="px-6 py-4">Status</th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">
                       {crs.filter(c => c.riskScore === 'High').map(cr => (
-                        <tr key={cr._id} className="border-b border-[#ff4500]/10 hover:bg-[#ff4500]/5 transition-colors">
-                          <td className="px-8 py-5 font-bold text-white">{cr.title}</td>
-                          <td className="px-8 py-5"><span className="text-xs font-medium text-zinc-400 bg-[#222] px-3 py-1 rounded">{cr.changeType}</span></td>
-                          <td className="px-8 py-5"><span className="text-primary font-bold uppercase tracking-widest text-xs">{cr.priority}</span></td>
-                          <td className="px-8 py-5"><span className="text-primary font-bold bg-[#ff4500]/10 px-3 py-1 rounded text-xs">{cr.impactLevel || '—'}</span></td>
-                          <td className="px-8 py-5"><span className={`text-xs font-bold uppercase tracking-wider ${cr.status === 'Approved' ? 'text-emerald-500' : cr.status === 'Rejected' ? 'text-zinc-500' : 'text-primary'}`}>{cr.status}</span></td>
+                        <tr key={cr._id} className="border-b border-red-500/10 hover:bg-red-500/10 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-white">{cr.title}</td>
+                          <td className="px-6 py-4 text-zinc-400">{cr.changeType}</td>
+                          <td className="px-6 py-4 text-red-400 font-semibold">{cr.priority}</td>
+                          <td className="px-6 py-4"><span className="text-red-400 font-semibold bg-red-500/10 px-2 py-1 rounded text-xs border border-red-500/20">{cr.impactLevel || '—'}</span></td>
+                          <td className="px-6 py-4"><span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${cr.status === 'Approved' ? 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5' : cr.status === 'Rejected' ? 'text-zinc-400 border-zinc-400/20 bg-zinc-400/5' : 'text-primary border-primary/20 bg-primary/5'}`}>{cr.status}</span></td>
                         </tr>
                       ))}
                     </tbody>

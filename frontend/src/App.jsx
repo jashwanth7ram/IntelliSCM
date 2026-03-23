@@ -20,9 +20,13 @@ function AppLayout({ children }) {
   const { user } = useAuth()
   if (!user) return <>{children}</>
   return (
-    <div className="flex min-h-screen bg-background text-textMain">
+    <div className="flex min-h-screen bg-background text-textMain relative overflow-hidden">
+      {/* Global Xtract Glowing Background Orbs */}
+      <div className="fixed top-[-20%] left-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-900/30 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      
       <Sidebar />
-      <main className="flex-1 flex flex-col items-center justify-start p-6 md:p-10 ml-0 md:ml-64 transition-all overflow-x-hidden">
+      <main className="flex-1 flex flex-col items-center justify-start p-6 md:p-10 ml-0 md:ml-64 transition-all relative z-10">
         <div className="w-full max-w-6xl">
           {children}
         </div>

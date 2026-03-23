@@ -7,13 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#050505',
-        surface: '#111111',
-        primary: '#FF4500', // Fiery orange/red
-        primaryHover: '#E63E00',
+        background: '#000000',
+        surface: '#0a0a0a',
+        primary: '#A87FF3', // Soft Purple/Lavender
+        primaryHover: '#9333ea',
         textMain: '#ffffff',
-        textMuted: '#888888',
-        border: '#2a2a2a',
+        textMuted: '#999999',
+        border: '#1a1a1a',
         danger: '#ef4444',
         warning: '#f59e0b',
         success: '#10b981',

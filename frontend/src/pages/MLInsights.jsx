@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { mlAPI } from '../services/mlApi'
-import { FaBrain, FaArrowRight } from 'react-icons/fa'
+import { FaBrain, FaWandMagicSparkles } from 'react-icons/fa6'
 
 const DEFAULT_FORM = {
   loc: 190, v_g: 3, ev_g: 1, iv_g: 3,
@@ -25,28 +25,31 @@ export default function MLInsights() {
       setResult(res.data)
     } catch (err) {
       if (err.code === 'ERR_NETWORK') {
-        setError('ML service is offline. Run: cd ml-service && uvicorn main:app --port 8000')
+        setError('ML Model Server is unreachable. Please verify connection.')
       } else {
-        setError(err.response?.data?.detail || 'Prediction failed.')
+        setError(err.response?.data?.detail || 'Prediction failed. Invalid metrics.')
       }
     } finally { setLoading(false) }
   }
 
   return (
     <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
-      <div className="mb-16 pt-8">
-        <h1 className="text-5xl font-black text-white tracking-tighter uppercase mb-4">
-          MACHINE<br/><span className="text-primary">INTELLIGENCE</span>
+      <div className="mb-12 pt-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6">
+          <FaBrain /> AI Risk Guardian
+        </div>
+        <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-4">
+          Machine Intelligence
         </h1>
-        <p className="text-sm font-medium uppercase tracking-widest text-zinc-500">Predict defect probability using RandomForest on NASA JM1.</p>
+        <p className="text-lg text-textMuted max-w-2xl leading-relaxed">
+          Predict software defect probability using a RandomForest model trained on NASA JM1 telemetry.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
         {/* Input Panel */}
-        <div className="bg-[#111] border border-[#222] rounded-xl p-8 sm:p-10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-          
-          <h2 className="text-xl font-black text-white uppercase tracking-tight mb-8 relative z-10">Software Metrics</h2>
+        <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8 sm:p-10 relative overflow-hidden shadow-2xl">
+          <h2 className="text-xl font-bold text-white tracking-tight mb-8 relative z-10 border-b border-white/[0.05] pb-4">Software Metrics</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 relative z-10">
             {[
@@ -62,39 +65,39 @@ export default function MLInsights() {
               { k: 'total_Opnd',label:'Total Operands' },
             ].map(({ k, label }) => (
               <div className="flex flex-col gap-2" key={k}>
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{label}</label>
-                <input type="number" className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-4 py-3 rounded-md outline-none text-sm placeholder-zinc-700"
+                <label className="text-xs font-semibold text-textMuted">{label}</label>
+                <input type="number" className="w-full bg-black/40 border border-white/[0.1] focus:border-primary/50 transition-colors text-white px-4 py-3 rounded-xl outline-none text-sm placeholder-zinc-700 shadow-inner"
                   value={form[k]} onChange={set(k)} step="any" min={0} />
               </div>
             ))}
           </div>
 
-          <details className="mt-4 group relative z-10 border border-[#333] rounded-lg bg-[#0a0a0a] overflow-hidden">
-            <summary className="p-4 cursor-pointer text-zinc-400 font-bold uppercase tracking-widest text-xs flex items-center justify-between hover:text-white transition-colors bg-[#0f0f0f]">
-              <span>Halstead Metrics</span>
+          <details className="group relative z-10 border border-white/[0.05] rounded-2xl bg-white/[0.01] overflow-hidden mb-8">
+            <summary className="p-5 cursor-pointer text-textMuted font-semibold text-sm flex items-center justify-between hover:text-white hover:bg-white/[0.02] transition-colors">
+              <span>Extended Halstead Telemetry</span>
               <span className="group-open:rotate-180 transition-transform">▼</span>
             </summary>
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 bg-[#0a0a0a]">
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 bg-black/20 border-t border-white/[0.05]">
               {[
-                { k: 'n', label: 'n (length)' }, { k:'v', label: 'v (volume)' },
-                { k: 'l', label: 'l (level)' },  { k:'d', label: 'd (difficulty)' },
-                { k: 'i', label: 'i (intelligence)' }, { k:'e', label: 'e (effort)' },
+                { k: 'n', label: 'Length (n)' }, { k:'v', label: 'Volume (v)' },
+                { k: 'l', label: 'Level (l)' },  { k:'d', label: 'Difficulty (d)' },
+                { k: 'i', label: 'Intelligence (i)' }, { k:'e', label: 'Effort (e)' },
               ].map(({ k, label }) => (
                 <div className="flex flex-col gap-2" key={k}>
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{label}</label>
-                  <input type="number" className="w-full bg-[#111] border border-[#333] focus:border-primary transition-colors text-white px-4 py-3 rounded-md outline-none text-sm" 
+                  <label className="text-xs font-semibold text-textMuted">{label}</label>
+                  <input type="number" className="w-full bg-black/40 border border-white/[0.1] focus:border-primary/50 transition-colors text-white px-4 py-3 rounded-xl outline-none text-sm shadow-inner" 
                     value={form[k]} onChange={set(k)} step="any" min={0} />
                 </div>
               ))}
             </div>
           </details>
 
-          <div className="flex flex-col gap-4 mt-10 relative z-10">
-            <button className="bg-primary hover:bg-primaryHover text-[#050505] font-black uppercase tracking-widest py-4 rounded-lg transition-all text-sm flex items-center justify-center gap-3 w-full" onClick={predict} disabled={loading}>
-              {loading ? 'Analyzing...' : <><FaBrain /> Predict Risk</>}
+          <div className="flex flex-col sm:flex-row gap-4 relative z-10 pt-6 border-t border-white/[0.05]">
+            <button className="bg-primary hover:bg-primaryHover text-white font-bold py-4 px-8 rounded-xl transition-all text-sm flex items-center justify-center gap-3 flex-1 shadow-[0_0_20px_rgba(168,127,243,0.3)]" onClick={predict} disabled={loading}>
+              {loading ? 'Analyzing Neural Network...' : <><FaBrain /> Predict Defect Risk</>}
             </button>
-            <button className="bg-transparent border border-zinc-700 hover:border-white text-zinc-400 hover:text-white font-black uppercase tracking-widest py-4 rounded-lg transition-all text-xs w-full" onClick={() => setForm(DEFAULT_FORM)}>
-              Load Sample Values
+            <button className="bg-white/[0.03] border border-white/[0.1] hover:bg-white/[0.08] text-white font-semibold py-4 px-8 rounded-xl transition-all text-sm flex items-center justify-center gap-2" onClick={() => setForm(DEFAULT_FORM)}>
+              <FaWandMagicSparkles /> Load Sample
             </button>
           </div>
         </div>
@@ -102,62 +105,63 @@ export default function MLInsights() {
         {/* Results Panel */}
         <div className="flex flex-col gap-6">
           {error && (
-            <div className="bg-red-950/50 border border-error/50 text-error px-6 py-4 rounded-lg text-sm font-bold tracking-wide uppercase">{error}</div>
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-2xl text-sm font-semibold flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>{error}</div>
           )}
 
           {!result && !loading && (
-            <div className="bg-[#111] border border-[#222] rounded-xl flex flex-col items-center justify-center text-center p-16 text-zinc-600 h-full min-h-[400px]">
-              <FaBrain size={48} className="opacity-20 mb-6" />
-              <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">Awaiting Telemetry</h3>
-              <p className="text-sm font-medium uppercase tracking-widest mb-8">Run analysis to see results.</p>
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl flex flex-col items-center justify-center text-center p-16 text-textMuted h-full min-h-[500px]">
+              <div className="w-24 h-24 rounded-full bg-white/[0.02] border border-white/[0.05] flex items-center justify-center mb-6">
+                <FaBrain size={32} className="opacity-40" />
+              </div>
+              <h3 className="text-xl font-bold text-white tracking-tight mb-2">Awaiting Telemetry</h3>
+              <p className="text-sm font-medium">Input metrics and run analysis to render predictions.</p>
             </div>
           )}
 
           {loading && (
-            <div className="bg-[#111] border border-[#222] rounded-xl flex flex-col items-center justify-center text-center p-16 h-full min-h-[400px]">
+            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl flex flex-col items-center justify-center text-center p-16 h-full min-h-[500px]">
               <span className="loading loading-ring w-20 text-primary mb-6"></span>
-              <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest animate-pulse">Running ML Pipeline...</p>
+              <p className="text-sm font-semibold text-textMuted animate-pulse">Running ML Pipeline...</p>
             </div>
           )}
 
           {result && (
-            <>
+            <div className="flex flex-col gap-6">
               {/* Main Risk Score */}
-              <div className="bg-[#111] border border-[#222] rounded-xl p-10 relative overflow-hidden flex flex-col items-center text-center">
-                <div className={`absolute top-0 left-0 w-full h-1 ${result.risk_level === 'High' ? 'bg-primary' : result.risk_level === 'Medium' ? 'bg-yellow-500' : 'bg-emerald-500'}`}></div>
+              <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-10 relative overflow-hidden flex flex-col items-center text-center">
+                <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl pointer-events-none ${result.risk_level === 'High' ? 'bg-red-500/20' : result.risk_level === 'Medium' ? 'bg-amber-500/20' : 'bg-emerald-500/20'}`}></div>
                 
-                <h2 className={`text-5xl font-black mb-1 uppercase tracking-tighter ${result.risk_level === 'High' ? 'text-primary' : result.risk_level === 'Medium' ? 'text-yellow-500' : 'text-emerald-500'}`}>
-                  {result.risk_level} RISK
-                </h2>
-                <div className="text-6xl font-black text-white mb-6">
-                  {Math.round(result.defect_probability * 100)}<span className="text-3xl text-zinc-600">%</span>
+                <h2 className="text-sm font-bold text-textMuted mb-4 uppercase tracking-widest">Assessment Result</h2>
+                <div className="text-7xl font-black text-white tracking-tighter mb-4">
+                  {Math.round(result.defect_probability * 100)}<span className="text-3xl text-zinc-500 font-medium">%</span>
                 </div>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-8">
-                  {result.confidence.toFixed(1)}% MODEL CONFIDENCE
+                
+                <div className="flex items-center gap-3 mb-8">
+                  <span className={`px-4 py-1.5 rounded-full text-sm font-bold border ${result.risk_level === 'High' ? 'text-red-400 bg-red-400/10 border-red-400/30' : result.risk_level === 'Medium' ? 'text-amber-400 bg-amber-400/10 border-amber-400/30' : 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30'}`}>
+                    {result.risk_level} Risk
+                  </span>
+                  <span className="px-4 py-1.5 rounded-full text-sm font-semibold bg-white/[0.05] border border-white/[0.1] text-white">
+                    {result.confidence.toFixed(1)}% Confidence
+                  </span>
+                </div>
+                
+                <p className="text-lg text-white font-medium">
+                  {result.defect_predicted ? 'Defect probability is alarmingly high.' : 'Code architecture appears stable.'}
                 </p>
-                
-                <div className="flex flex-wrap gap-2 justify-center">
-                  <span className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded border ${result.risk_level === 'High' ? 'text-primary border-primary bg-primary/5' : result.risk_level === 'Medium' ? 'text-yellow-500 border-yellow-500 bg-yellow-500/5' : 'text-emerald-500 border-emerald-500 bg-emerald-500/5'}`}>
-                    {result.defect_predicted ? 'Defect Probable' : 'Stable Code'}
-                  </span>
-                  <span className="text-xs font-bold uppercase tracking-wider px-4 py-2 rounded border border-blue-500/50 text-blue-400 bg-blue-500/5">
-                    Impact: {result.impact_level}
-                  </span>
-                </div>
               </div>
 
               {/* Feature Contributions */}
-              <div className="bg-[#111] border border-[#222] rounded-xl p-8">
-                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Key Risk Factors</h3>
+              <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8">
+                <h3 className="text-lg font-bold text-white tracking-tight mb-6">Key Risk Factors</h3>
                 <div className="flex flex-col gap-5">
                   {Object.entries(result.feature_contributions).map(([k, v]) => (
                     <div key={k} className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
-                        <span className="text-zinc-400">{k.replace(/_/g, ' ')}</span>
-                        <span className="text-white bg-[#222] px-2 py-0.5 rounded">{typeof v === 'number' ? v.toFixed(1) : v}</span>
+                      <div className="flex justify-between items-center text-sm font-medium">
+                        <span className="text-textMuted capitalize">{k.replace(/_/g, ' ')}</span>
+                        <span className="text-white bg-white/[0.05] border border-white/[0.1] px-2.5 py-1 rounded-lg text-xs">{typeof v === 'number' ? v.toFixed(1) : v}</span>
                       </div>
-                      <div className="w-full bg-[#0a0a0a] rounded-full h-1 overflow-hidden border border-[#222]">
-                        <div className={`h-full ${result.risk_level === 'High' ? 'bg-primary' : result.risk_level === 'Medium' ? 'bg-yellow-500' : 'bg-emerald-500'}`} 
+                      <div className="w-full bg-black/40 rounded-full h-1.5 overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-1000 ${result.risk_level === 'High' ? 'bg-red-400' : result.risk_level === 'Medium' ? 'bg-amber-400' : 'bg-primary'}`} 
                              style={{ width: `${Math.min((v / 10000) * 100, 100)}%` }}></div>
                       </div>
                     </div>
@@ -166,17 +170,22 @@ export default function MLInsights() {
               </div>
 
               {/* Recommendations */}
-              <div className="bg-[#111] border border-[#222] rounded-xl p-8">
-                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 text-yellow-500">Action Plan</h3>
-                <div className="flex flex-col gap-4">
-                  {result.recommendations.map((rec, i) => (
-                    <div key={i} className="p-5 rounded-lg text-xs font-bold uppercase tracking-wider leading-relaxed border border-[#333] bg-[#0a0a0a] text-zinc-300">
-                      {rec}
-                    </div>
-                  ))}
+              {result.recommendations?.length > 0 && (
+                <div className="bg-primary/5 border border-primary/20 rounded-3xl p-8 relative overflow-hidden">
+                  <h3 className="text-lg font-bold text-white tracking-tight mb-6 flex items-center gap-2">
+                    <FaWandMagicSparkles className="text-primary" /> Action Plan
+                  </h3>
+                  <div className="flex flex-col gap-3">
+                    {result.recommendations.map((rec, i) => (
+                      <div key={i} className="flex items-start gap-3 text-sm text-zinc-300 leading-relaxed bg-black/20 p-4 rounded-xl border border-white/[0.05]">
+                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">{i+1}</span>
+                        {rec}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </>
+              )}
+            </div>
           )}
         </div>
       </div>

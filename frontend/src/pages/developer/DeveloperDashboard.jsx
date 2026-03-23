@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { crsAPI } from '../../services/api'
-import { FaCodeBranch, FaBrain, FaArrowRight } from 'react-icons/fa'
+import { FaCodeBranch, FaBrain, FaArrowRight, FaMagic } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
@@ -25,108 +25,119 @@ export default function DeveloperDashboard() {
 
   return (
     <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
-      <div className="mb-16 pt-8">
-        <h1 className="text-5xl font-black text-white tracking-tighter uppercase mb-4">
-          DEVELOPER<br/><span className="text-primary">DASHBOARD</span>
+      <div className="mb-12 pt-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6">
+          <FaMagic /> Welcome back, {user?.name?.split(' ')[0] || 'Developer'}
+        </div>
+        <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-4">
+          Developer Overview
         </h1>
-        <p className="text-sm font-medium uppercase tracking-widest text-zinc-500">Track change requests and code risk.</p>
+        <p className="text-lg text-textMuted max-w-2xl leading-relaxed">
+          Monitor your change requests, analyze code risk, and track deployment pipelines in real-time.
+        </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
         {[
-          { label: 'Total CRs',  value: myCrs.length, num: '01' },
-          { label: 'Pending',    value: pending,      num: '02' },
-          { label: 'Approved',   value: approved,     num: '03' },
-          { label: 'Rejected',   value: rejected,     num: '04' },
+          { label: 'Total Requests',  value: myCrs.length },
+          { label: 'In Review',       value: pending },
+          { label: 'Merged',          value: approved },
+          { label: 'Requires Changes',value: rejected },
         ].map((s, i) => (
-          <div key={i} className="bg-[#111] border border-[#222] rounded-xl p-8 hover:bg-[#161616] transition-colors relative group">
-            <div className="text-primary font-bold text-sm mb-8 bg-primary/10 w-fit px-2 py-1 rounded inline-block">{s.num}</div>
-            <div className={`text-6xl font-black text-white mb-4 ${s.label === 'Pending' ? 'text-zinc-400' : s.label === 'Approved' ? 'text-white' : s.label === 'Rejected' ? 'text-zinc-600' : 'text-white'}`}>{s.value}</div>
-            <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">{s.label}</div>
-            <FaArrowRight className="absolute top-8 right-8 text-zinc-700 group-hover:text-primary transition-colors" />
+          <div key={i} className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl p-6 hover:bg-white/[0.04] transition-colors relative group">
+            <div className="text-4xl font-black text-white tracking-tight mb-2">{s.value}</div>
+            <div className="text-sm font-medium text-textMuted">{s.label}</div>
+            <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/[0.02] border border-white/[0.05] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+              <FaArrowRight className="text-primary text-xs" />
+            </div>
           </div>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8">SERVICES</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-        <Link to="/developer/submit-cr" className="bg-[#111] border border-[#222] rounded-xl p-10 hover:border-primary transition-colors group flex flex-col justify-between min-h-[220px]">
-          <div>
-            <div className="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-6">
+      <div className="mb-16">
+        <h2 className="text-2xl font-bold text-white tracking-tight mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Link to="/developer/submit-cr" className="bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-colors group relative overflow-hidden">
+            <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full pointer-events-none"></div>
+            <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6 border border-primary/20">
               <FaCodeBranch size={20} />
             </div>
-            <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-3">Submit Change Request</h3>
-            <p className="text-sm text-zinc-500 leading-relaxed">Propose new features, bug fixes, or architectural changes directly into the automated pipeline.</p>
-          </div>
-          <div className="mt-8 flex items-center text-xs font-bold text-primary uppercase tracking-widest gap-2">
-            Get Started <FaArrowRight />
-          </div>
-        </Link>
-        <Link to="/ml-insights" className="bg-[#111] border border-[#222] rounded-xl p-10 hover:border-primary transition-colors group flex flex-col justify-between min-h-[220px]">
-          <div>
-            <div className="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-6">
+            <h3 className="text-xl font-bold text-white tracking-tight mb-2">Submit Change Request</h3>
+            <p className="text-sm text-textMuted leading-relaxed">
+              Propose new features or branch modifications for integration into the core repository.
+            </p>
+          </Link>
+          <Link to="/ml-insights" className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl p-8 hover:border-white/[0.1] transition-colors group relative overflow-hidden">
+            <div className="w-12 h-12 bg-white/[0.05] text-white rounded-xl flex items-center justify-center mb-6 border border-white/[0.1]">
               <FaBrain size={20} />
             </div>
-            <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-3">ML Risk Analysis</h3>
-            <p className="text-sm text-zinc-500 leading-relaxed">Predict defect probability using our RandomForest model trained on NASA JM1 software metrics.</p>
-          </div>
-          <div className="mt-8 flex items-center text-xs font-bold text-primary uppercase tracking-widest gap-2">
-            Analyze Code <FaArrowRight />
-          </div>
-        </Link>
+            <h3 className="text-xl font-bold text-white tracking-tight mb-2">ML Risk Analysis</h3>
+            <p className="text-sm text-textMuted leading-relaxed">
+              Evaluate your code changes against our trained defect prediction models.
+            </p>
+          </Link>
+        </div>
       </div>
 
       {/* My Change Requests */}
-      <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8">RECENT WORK</h2>
-      <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
-        <div className="p-0 overflow-x-auto">
-          {loading ? (
-            <div className="flex justify-center items-center py-32 px-6">
-              <span className="loading loading-spinner text-primary loading-lg"></span>
-            </div>
-          ) : myCrs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 px-6 text-zinc-600">
-              <FaCodeBranch size={48} className="opacity-20 mb-6" />
-              <p className="text-sm font-bold uppercase tracking-widest">No recent work found.</p>
-            </div>
-          ) : (
-            <table className="w-full whitespace-nowrap text-left">
-              <thead>
-                <tr className="bg-[#0a0a0a] border-b border-[#222] text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                  <th className="px-8 py-5">Title</th>
-                  <th className="px-8 py-5">Type</th>
-                  <th className="px-8 py-5">Priority</th>
-                  <th className="px-8 py-5">Risk</th>
-                  <th className="px-8 py-5">Status</th>
-                  <th className="px-8 py-5">Date</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {myCrs.map(cr => (
-                  <tr key={cr._id} className="border-b border-[#222] hover:bg-[#161616] transition-colors">
-                    <td className="px-8 py-5 font-bold text-white max-w-[250px] truncate">{cr.title}</td>
-                    <td className="px-8 py-5"><span className="text-xs font-medium text-zinc-400 bg-[#222] px-3 py-1 rounded">{cr.changeType}</span></td>
-                    <td className="px-8 py-5 font-medium text-zinc-300">{cr.priority}</td>
-                    <td className="px-8 py-5">
-                      <span className={`text-xs font-bold px-3 py-1 rounded ${cr.riskScore === 'High' ? 'text-[#050505] bg-primary' : cr.riskScore === 'Medium' ? 'text-yellow-500 bg-yellow-500/10' : 'text-emerald-500 bg-emerald-500/10'}`}>
-                        {cr.riskScore || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5">
-                      <span className={`text-xs font-bold uppercase tracking-wider ${cr.status === 'Approved' ? 'text-emerald-500' : cr.status === 'Rejected' ? 'text-zinc-500' : 'text-primary'}`}>
-                        {cr.status}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 text-zinc-600 text-xs font-mono">
-                      {cr.createdAt ? new Date(cr.createdAt).toLocaleDateString() : '—'}
-                    </td>
+      <div className="mb-16">
+        <div className="flex justify-between items-end mb-6">
+          <h2 className="text-2xl font-bold text-white tracking-tight">Recent Activity</h2>
+          <Link to="/developer/submit-cr" className="text-sm font-medium text-primary hover:text-white transition-colors">View All Archive &rarr;</Link>
+        </div>
+        
+        <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl overflow-hidden">
+          <div className="p-0 overflow-x-auto">
+            {loading ? (
+              <div className="flex justify-center items-center py-20 px-6">
+                <span className="loading loading-spinner text-primary loading-lg"></span>
+              </div>
+            ) : myCrs.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 px-6 text-zinc-600">
+                <FaCodeBranch size={32} className="opacity-40 mb-4" />
+                <p className="text-sm font-medium">No recent activity.</p>
+              </div>
+            ) : (
+              <table className="w-full whitespace-nowrap text-left">
+                <thead>
+                  <tr className="border-b border-white/[0.05] text-xs font-semibold text-textMuted uppercase tracking-wider bg-white/[0.01]">
+                    <th className="px-6 py-4">Request Title</th>
+                    <th className="px-6 py-4">Priority</th>
+                    <th className="px-6 py-4">AI Risk</th>
+                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4 text-right">Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody className="text-sm">
+                  {myCrs.map(cr => (
+                    <tr key={cr._id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-white max-w-[300px] truncate">{cr.title}</div>
+                        <div className="text-xs text-textMuted mt-1">{cr.changeType}</div>
+                      </td>
+                      <td className="px-6 py-4 font-medium text-zinc-300">{cr.priority}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${cr.riskScore === 'High' ? 'text-red-400 bg-red-400/10 border border-red-400/20' : cr.riskScore === 'Medium' ? 'text-amber-400 bg-amber-400/10 border border-amber-400/20' : 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20'}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${cr.riskScore === 'High' ? 'bg-red-400' : cr.riskScore === 'Medium' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
+                          {cr.riskScore || 'Low'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${cr.status === 'Approved' ? 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5' : cr.status === 'Rejected' ? 'text-zinc-400 border-zinc-400/20 bg-zinc-400/5' : 'text-primary border-primary/20 bg-primary/5'}`}>
+                          {cr.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-textMuted text-right">
+                        {cr.createdAt ? new Date(cr.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric'}) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
     </div>

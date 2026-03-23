@@ -2,13 +2,13 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
   FaHome, FaCodeBranch, FaFolderOpen, FaShieldAlt,
-  FaCheckSquare, FaChartBar, FaUsers, FaSignOutAlt, FaBrain, FaRegFileAlt
+  FaCheckSquare, FaChartBar, FaUsers, FaSignOutAlt, FaBrain, FaRegFileAlt, FaCube
 } from 'react-icons/fa'
 
 const ROLE_NAV = {
   Developer: [
     { to: '/developer', label: 'Dashboard', icon: FaHome },
-    { to: '/developer/submit-cr', label: 'Submit CR', icon: FaCodeBranch },
+    { to: '/developer/submit-cr', label: 'Submit Request', icon: FaCodeBranch },
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   'Project Manager': [
@@ -17,16 +17,16 @@ const ROLE_NAV = {
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   'CCB Member': [
-    { to: '/ccb', label: 'CCB Dashboard', icon: FaShieldAlt },
+    { to: '/ccb', label: 'CCB Board', icon: FaShieldAlt },
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   Auditor: [
-    { to: '/auditor', label: 'Audit Dashboard', icon: FaCheckSquare },
+    { to: '/auditor', label: 'Audits', icon: FaCheckSquare },
     { to: '/auditor/baselines', label: 'Baselines', icon: FaRegFileAlt },
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   Admin: [
-    { to: '/admin', label: 'Dashboard', icon: FaHome },
+    { to: '/admin', label: 'Overview', icon: FaHome },
     { to: '/admin/reports', label: 'Reports', icon: FaChartBar },
     { to: '/admin/users', label: 'Users', icon: FaUsers },
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
@@ -44,30 +44,33 @@ export default function Sidebar() {
   const handleLogout = () => { logout(); navigate('/login') }
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#050505] border-r border-[#1a1a1a] flex flex-col z-50 font-sans">
-      <div className="h-24 flex items-center px-8 border-b border-[#1a1a1a]">
-        <div>
-          <h1 className="text-2xl font-black tracking-tighter text-white uppercase"><span className="text-primary">INTELLI</span>SCM</h1>
+    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-black/40 backdrop-blur-2xl border-r border-white/[0.05] flex flex-col z-50 font-sans">
+      <div className="h-24 flex items-center px-8 border-b border-white/[0.05]">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(168,127,243,0.3)]">
+            <FaCube size={16} />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight text-white">IntelliSCM</h1>
         </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 py-8">
-        <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-6 ml-4">Menu</div>
-        <ul className="flex flex-col gap-2">
+        <div className="text-xs font-semibold text-textMuted/60 uppercase tracking-widest mb-6 ml-4">Workspace</div>
+        <ul className="flex flex-col gap-1.5">
           {navItems.map(({ to, label, icon: Icon }) => (
             <li key={to}>
               <NavLink
                 to={to}
                 end={to.split('/').length <= 2}
                 className={({ isActive }) => 
-                  `rounded-md px-4 py-3 flex items-center gap-4 transition-colors text-xs font-bold uppercase tracking-wider ${
+                  `rounded-xl px-4 py-3 flex items-center gap-3 transition-all text-sm font-medium ${
                     isActive 
-                      ? 'bg-primary text-white' 
-                      : 'text-zinc-500 hover:bg-[#111111] hover:text-white'
+                      ? 'bg-primary/10 text-primary border border-primary/20 shadow-[0_4px_20px_rgba(0,0,0,0.2)]' 
+                      : 'text-textMuted hover:bg-white/[0.03] hover:text-white border border-transparent'
                   }`
                 }
               >
-                <Icon size={16} />
+                <Icon size={16} className={({isActive}) => isActive ? 'text-primary' : 'text-textMuted/70'} />
                 <span>{label}</span>
               </NavLink>
             </li>
@@ -75,21 +78,21 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      <div className="p-6 border-t border-[#1a1a1a] bg-[#050505]">
+      <div className="p-6 border-t border-white/[0.05] bg-black/20">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
+          <div className="w-10 h-10 rounded-full bg-white/[0.05] border border-white/[0.1] flex items-center justify-center text-white font-bold text-sm">
             {initials}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-bold text-white truncate max-w-[140px]">{user.name || 'User'}</p>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-widest truncate max-w-[140px] mt-0.5">{user.role}</p>
+            <p className="text-sm font-semibold text-white truncate">{user.name || 'User'}</p>
+            <p className="text-xs text-textMuted truncate mt-0.5">{user.role}</p>
           </div>
         </div>
         <button 
-          className="w-full py-3 px-4 rounded-md border border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white hover:border-white transition-colors flex items-center justify-center gap-2"
+          className="w-full py-2.5 px-4 rounded-xl border border-white/[0.05] bg-white/[0.02] text-sm font-medium text-textMuted hover:text-white hover:bg-white/[0.05] hover:border-white/[0.1] transition-all flex items-center justify-center gap-2"
           onClick={handleLogout}
         >
-          <FaSignOutAlt size={12} /> Sign Out
+          <FaSignOutAlt size={14} /> Sign Out
         </button>
       </div>
     </aside>
