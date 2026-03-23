@@ -34,14 +34,14 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#000000] px-4 relative overflow-hidden font-sans w-full">
-      {/* Abstract background elements */}
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none z-0 transform -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-900/30 rounded-full blur-[100px] pointer-events-none z-0 transform translate-x-1/2 translate-y-1/2"></div>
+      {/* Fusion AI Background Elements */}
+      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[140px] pointer-events-none z-0 transform -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-secondary/15 rounded-full blur-[120px] pointer-events-none z-0 transform translate-x-1/2 translate-y-1/2"></div>
 
-      <div className="w-full max-w-lg bg-white/[0.02] backdrop-blur-2xl border border-white/[0.1] rounded-3xl relative z-10 fade-in shadow-2xl">
+      <div className="w-full max-w-lg bg-white/[0.02] backdrop-blur-2xl border border-white/[0.1] rounded-3xl relative z-10 fade-in shadow-[0_0_50px_rgba(45,104,255,0.05)]">
         <div className="p-10 sm:p-14">
           <div className="text-center mb-10">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_30px_rgba(168,127,243,0.3)] mb-6">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_30px_rgba(45,104,255,0.3)] mb-6">
               <FaCube size={28} />
             </div>
             <h1 className="text-4xl font-black text-white tracking-tighter mb-2">Sign in</h1>
@@ -80,7 +80,7 @@ export default function Login() {
               </div>
             </div>
 
-            <button type="submit" className="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-4 rounded-xl mt-4 transition-all text-sm shadow-[0_0_20px_rgba(168,127,243,0.3)]" disabled={loading}>
+            <button type="submit" className="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-4 rounded-xl mt-4 transition-all text-sm shadow-[0_0_20px_rgba(45,104,255,0.4)]" disabled={loading}>
               {loading ? 'Authenticating Identity...' : 'Continueto Dashboard'}
             </button>
           </form>

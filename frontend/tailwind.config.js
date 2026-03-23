@@ -9,10 +9,11 @@ export default {
       colors: {
         background: '#000000',
         surface: '#0a0a0a',
-        primary: '#A87FF3', // Soft Purple/Lavender
-        primaryHover: '#9333ea',
+        primary: '#2D68FF', // Electric Blue
+        secondary: '#FF7E2D', // Fiery Orange
+        primaryHover: '#1d4ed8',
         textMain: '#ffffff',
-        textMuted: '#999999',
+        textMuted: '#A1A1A1',
         border: '#1a1a1a',
         danger: '#ef4444',
         warning: '#f59e0b',

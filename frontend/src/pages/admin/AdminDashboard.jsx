@@ -7,7 +7,7 @@ import {
 } from 'recharts'
 import { FaArrowRight } from 'react-icons/fa'
 
-const COLORS = ['#A87FF3', '#60a5fa', '#f59e0b', '#ef4444', '#10b981']
+const COLORS = ['#2D68FF', '#FF7E2D', '#f59e0b', '#ef4444', '#10b981']
 
 const TOOLTIP_STYLE = {
   backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)',
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
                   <Legend wrapperStyle={{ paddingTop: 20, fontSize: 12, fontWeight: 600, color: '#e2e8f0' }} />
                   <Line type="monotone" dataKey="submitted" stroke="#ffffff" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="Requests"/>
-                  <Line type="monotone" dataKey="approved"  stroke="#A87FF3" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="Approvals"/>
+                  <Line type="monotone" dataKey="approved"  stroke="#2D68FF" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#111' }} activeDot={{ r: 6 }} name="Approvals"/>
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
                   <XAxis dataKey="name" tick={{ fill: '#999', fontSize: 10, fontWeight: 500 }} angle={-30} textAnchor="end" height={50} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-                  <Bar dataKey="count" fill="#A87FF3" radius={[8,8,0,0]} name="Volume"/>
+                  <Bar dataKey="count" fill="#2D68FF" radius={[8,8,0,0]} name="Volume"/>
                 </BarChart>
               </ResponsiveContainer>
             </div>
