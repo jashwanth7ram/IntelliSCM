@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { mlAPI } from '../services/mlApi'
-import { Cpu, Zap, AlertTriangle, TrendingUp, Activity } from 'lucide-react'
+import { FaBrain, FaArrowRight } from 'react-icons/fa'
 
 const DEFAULT_FORM = {
   loc: 190, v_g: 3, ev_g: 1, iv_g: 3,
@@ -9,9 +9,6 @@ const DEFAULT_FORM = {
   lOCode: 129, lOComment: 29, lOBlank: 28, locCodeAndComment: 2,
   uniq_Op: 17, uniq_Opnd: 135, total_Op: 329, total_Opnd: 271, branchCount: 5,
 }
-
-const RISK_COLOR = { Low: 'var(--emerald)', Medium: 'var(--yellow)', High: 'var(--red)' }
-const IMPACT_COLOR = { Minor: 'var(--emerald)', Moderate: 'var(--blue)', Major: 'var(--yellow)', Critical: 'var(--red)' }
 
 export default function MLInsights() {
   const [form, setForm]     = useState(DEFAULT_FORM)
@@ -35,162 +32,145 @@ export default function MLInsights() {
     } finally { setLoading(false) }
   }
 
-  const riskColor = result ? RISK_COLOR[result.risk_level] : 'var(--emerald)'
-
   return (
-    <div className="fade-in">
-      <div className="page-header">
-        <h1 className="page-title">🤖 ML Risk Insights</h1>
-        <p className="page-subtitle">Predict defect probability and risk level for any software module using our RandomForest model trained on NASA JM1 data</p>
+    <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
+      <div className="mb-16 pt-8">
+        <h1 className="text-5xl font-black text-white tracking-tighter uppercase mb-4">
+          MACHINE<br/><span className="text-primary">INTELLIGENCE</span>
+        </h1>
+        <p className="text-sm font-medium uppercase tracking-widest text-zinc-500">Predict defect probability using RandomForest on NASA JM1.</p>
       </div>
 
-      <div className="grid-2" style={{ alignItems: 'start' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Input Panel */}
-        <div className="glass" style={{ padding: 28 }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Activity size={17} /> Software Module Metrics
-          </h2>
+        <div className="bg-[#111] border border-[#222] rounded-xl p-8 sm:p-10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+          
+          <h2 className="text-xl font-black text-white uppercase tracking-tight mb-8 relative z-10">Software Metrics</h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 relative z-10">
             {[
-              { k: 'loc',     label: 'Lines of Code (LOC)',       min: 1 },
-              { k: 'v_g',     label: 'Cyclomatic Complexity v(g)', min: 1 },
-              { k: 'ev_g',    label: 'Essential Complexity ev(g)', min: 1 },
-              { k: 'iv_g',    label: 'Design Complexity iv(g)',    min: 1 },
-              { k: 'branchCount', label: 'Branch Count',          min: 0 },
-              { k: 'lOCode',  label: 'Lines of Code',             min: 0 },
-              { k: 'uniq_Op', label: 'Unique Operators',          min: 0 },
-              { k: 'uniq_Opnd',label:'Unique Operands',           min: 0 },
-              { k: 'total_Op', label: 'Total Operators',          min: 0 },
-              { k: 'total_Opnd',label:'Total Operands',           min: 0 },
-            ].map(({ k, label, min }) => (
-              <div className="form-group" key={k}>
-                <label className="form-label" style={{ fontSize: 11 }}>{label}</label>
-                <input type="number" className="form-control"
-                  value={form[k]} onChange={set(k)} min={min} step="any"
-                  style={{ fontSize: 13 }} />
+              { k: 'loc',     label: 'Lines of Code (LOC)' },
+              { k: 'v_g',     label: 'Cyclomatic Comp v(g)' },
+              { k: 'ev_g',    label: 'Essential Comp ev(g)' },
+              { k: 'iv_g',    label: 'Design Comp iv(g)' },
+              { k: 'branchCount', label: 'Branch Count' },
+              { k: 'lOCode',  label: 'Lines of Code' },
+              { k: 'uniq_Op', label: 'Unique Operators' },
+              { k: 'uniq_Opnd',label:'Unique Operands' },
+              { k: 'total_Op', label: 'Total Operators' },
+              { k: 'total_Opnd',label:'Total Operands' },
+            ].map(({ k, label }) => (
+              <div className="flex flex-col gap-2" key={k}>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{label}</label>
+                <input type="number" className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-4 py-3 rounded-md outline-none text-sm placeholder-zinc-700"
+                  value={form[k]} onChange={set(k)} step="any" min={0} />
               </div>
             ))}
           </div>
 
-          <details style={{ marginTop: 16 }}>
-            <summary style={{ cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, marginBottom: 12 }}>
-              ▸ Halstead Metrics (optional)
+          <details className="mt-4 group relative z-10 border border-[#333] rounded-lg bg-[#0a0a0a] overflow-hidden">
+            <summary className="p-4 cursor-pointer text-zinc-400 font-bold uppercase tracking-widest text-xs flex items-center justify-between hover:text-white transition-colors bg-[#0f0f0f]">
+              <span>Halstead Metrics</span>
+              <span className="group-open:rotate-180 transition-transform">▼</span>
             </summary>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 bg-[#0a0a0a]">
               {[
                 { k: 'n', label: 'n (length)' }, { k:'v', label: 'v (volume)' },
                 { k: 'l', label: 'l (level)' },  { k:'d', label: 'd (difficulty)' },
                 { k: 'i', label: 'i (intelligence)' }, { k:'e', label: 'e (effort)' },
               ].map(({ k, label }) => (
-                <div className="form-group" key={k}>
-                  <label className="form-label" style={{ fontSize: 11 }}>{label}</label>
-                  <input type="number" className="form-control" value={form[k]} onChange={set(k)} step="any" style={{ fontSize: 13 }} />
+                <div className="flex flex-col gap-2" key={k}>
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{label}</label>
+                  <input type="number" className="w-full bg-[#111] border border-[#333] focus:border-primary transition-colors text-white px-4 py-3 rounded-md outline-none text-sm" 
+                    value={form[k]} onChange={set(k)} step="any" min={0} />
                 </div>
               ))}
             </div>
           </details>
 
-          <button className="btn btn-primary" onClick={predict} disabled={loading}
-            style={{ marginTop: 20, width: '100%', justifyContent: 'center', padding: '13px' }}>
-            {loading ? <><span className="pulse">⚙️</span> Analyzing…</> : <><Cpu size={16} /> Predict Risk</>}
-          </button>
-
-          <button className="btn btn-secondary btn-sm" onClick={() => setForm(DEFAULT_FORM)}
-            style={{ marginTop: 8, width: '100%', justifyContent: 'center' }}>
-            Reset to Sample Values
-          </button>
+          <div className="flex flex-col gap-4 mt-10 relative z-10">
+            <button className="bg-primary hover:bg-primaryHover text-[#050505] font-black uppercase tracking-widest py-4 rounded-lg transition-all text-sm flex items-center justify-center gap-3 w-full" onClick={predict} disabled={loading}>
+              {loading ? 'Analyzing...' : <><FaBrain /> Predict Risk</>}
+            </button>
+            <button className="bg-transparent border border-zinc-700 hover:border-white text-zinc-400 hover:text-white font-black uppercase tracking-widest py-4 rounded-lg transition-all text-xs w-full" onClick={() => setForm(DEFAULT_FORM)}>
+              Load Sample Values
+            </button>
+          </div>
         </div>
 
         {/* Results Panel */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {error && <div className="alert alert-error">{error}</div>}
+        <div className="flex flex-col gap-6">
+          {error && (
+            <div className="bg-red-950/50 border border-error/50 text-error px-6 py-4 rounded-lg text-sm font-bold tracking-wide uppercase">{error}</div>
+          )}
 
           {!result && !loading && (
-            <div className="glass" style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>
-              <Cpu size={48} style={{ opacity: 0.3, marginBottom: 16 }} />
-              <p>Enter module metrics and click <strong style={{ color: 'var(--emerald)' }}>Predict Risk</strong> to analyze</p>
-              <p style={{ fontSize: 12, marginTop: 8 }}>Model trained on 10,885 NASA JM1 software modules</p>
+            <div className="bg-[#111] border border-[#222] rounded-xl flex flex-col items-center justify-center text-center p-16 text-zinc-600 h-full min-h-[400px]">
+              <FaBrain size={48} className="opacity-20 mb-6" />
+              <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">Awaiting Telemetry</h3>
+              <p className="text-sm font-medium uppercase tracking-widest mb-8">Run analysis to see results.</p>
             </div>
           )}
 
           {loading && (
-            <div className="glass" style={{ padding: 60, textAlign: 'center' }}>
-              <div className="spinner" style={{ width: 48, height: 48, marginBottom: 16 }} />
-              <p style={{ color: 'var(--text-secondary)' }}>Running ML inference…</p>
+            <div className="bg-[#111] border border-[#222] rounded-xl flex flex-col items-center justify-center text-center p-16 h-full min-h-[400px]">
+              <span className="loading loading-ring w-20 text-primary mb-6"></span>
+              <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest animate-pulse">Running ML Pipeline...</p>
             </div>
           )}
 
           {result && (
             <>
               {/* Main Risk Score */}
-              <div className="glass" style={{ padding: 28, textAlign: 'center' }}>
-                <div className="risk-circle" style={{ borderColor: riskColor, boxShadow: `0 0 25px ${riskColor}44` }}>
-                  <div className="pct" style={{ color: riskColor }}>
-                    {Math.round(result.defect_probability * 100)}%
-                  </div>
-                  <div className="pct-label">Defect Risk</div>
-                </div>
-                <h2 style={{ fontSize: 22, fontWeight: 800, color: riskColor, marginBottom: 6 }}>
-                  {result.risk_level} Risk
+              <div className="bg-[#111] border border-[#222] rounded-xl p-10 relative overflow-hidden flex flex-col items-center text-center">
+                <div className={`absolute top-0 left-0 w-full h-1 ${result.risk_level === 'High' ? 'bg-primary' : result.risk_level === 'Medium' ? 'bg-yellow-500' : 'bg-emerald-500'}`}></div>
+                
+                <h2 className={`text-5xl font-black mb-1 uppercase tracking-tighter ${result.risk_level === 'High' ? 'text-primary' : result.risk_level === 'Medium' ? 'text-yellow-500' : 'text-emerald-500'}`}>
+                  {result.risk_level} RISK
                 </h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-                  {result.confidence.toFixed(1)}% model confidence
+                <div className="text-6xl font-black text-white mb-6">
+                  {Math.round(result.defect_probability * 100)}<span className="text-3xl text-zinc-600">%</span>
+                </div>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-8">
+                  {result.confidence.toFixed(1)}% MODEL CONFIDENCE
                 </p>
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 12, flexWrap: 'wrap' }}>
-                  <span className={`badge badge-${result.risk_level.toLowerCase()}`}>
-                    Risk: {result.risk_level}
+                
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <span className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded border ${result.risk_level === 'High' ? 'text-primary border-primary bg-primary/5' : result.risk_level === 'Medium' ? 'text-yellow-500 border-yellow-500 bg-yellow-500/5' : 'text-emerald-500 border-emerald-500 bg-emerald-500/5'}`}>
+                    {result.defect_predicted ? 'Defect Probable' : 'Stable Code'}
                   </span>
-                  <span className="badge" style={{
-                    background: `${IMPACT_COLOR[result.impact_level]}22`,
-                    color: IMPACT_COLOR[result.impact_level],
-                    border: `1px solid ${IMPACT_COLOR[result.impact_level]}44`
-                  }}>
+                  <span className="text-xs font-bold uppercase tracking-wider px-4 py-2 rounded border border-blue-500/50 text-blue-400 bg-blue-500/5">
                     Impact: {result.impact_level}
-                  </span>
-                  <span className={`badge badge-${result.defect_predicted ? 'rejected' : 'approved'}`}>
-                    {result.defect_predicted ? '⚠️ Defect Likely' : '✅ Low Defect Risk'}
                   </span>
                 </div>
               </div>
 
               {/* Feature Contributions */}
-              <div className="glass" style={{ padding: 24 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
-                  <TrendingUp size={15} style={{ display: 'inline', marginRight: 6 }} />
-                  Key Metrics
-                </h3>
-                {Object.entries(result.feature_contributions).map(([k, v]) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                    <span style={{ fontSize: 13, color: 'var(--text-secondary)', textTransform: 'capitalize' }}>
-                      {k.replace(/_/g, ' ')}
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, maxWidth: '60%', justifyContent: 'flex-end' }}>
-                      <div className="progress-bar" style={{ flex: 1 }}>
-                        <div className="progress-fill"
-                          style={{ width: `${Math.min((v / 10000) * 100, 100)}%`, background: riskColor }} />
+              <div className="bg-[#111] border border-[#222] rounded-xl p-8">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Key Risk Factors</h3>
+                <div className="flex flex-col gap-5">
+                  {Object.entries(result.feature_contributions).map(([k, v]) => (
+                    <div key={k} className="flex flex-col gap-2">
+                      <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
+                        <span className="text-zinc-400">{k.replace(/_/g, ' ')}</span>
+                        <span className="text-white bg-[#222] px-2 py-0.5 rounded">{typeof v === 'number' ? v.toFixed(1) : v}</span>
                       </div>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', minWidth: 50, textAlign: 'right' }}>
-                        {typeof v === 'number' ? v.toFixed(1) : v}
-                      </span>
+                      <div className="w-full bg-[#0a0a0a] rounded-full h-1 overflow-hidden border border-[#222]">
+                        <div className={`h-full ${result.risk_level === 'High' ? 'bg-primary' : result.risk_level === 'Medium' ? 'bg-yellow-500' : 'bg-emerald-500'}`} 
+                             style={{ width: `${Math.min((v / 10000) * 100, 100)}%` }}></div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               {/* Recommendations */}
-              <div className="glass" style={{ padding: 24 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
-                  <Zap size={15} style={{ display: 'inline', marginRight: 6 }} />
-                  Recommendations
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div className="bg-[#111] border border-[#222] rounded-xl p-8">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 text-yellow-500">Action Plan</h3>
+                <div className="flex flex-col gap-4">
                   {result.recommendations.map((rec, i) => (
-                    <div key={i} style={{
-                      padding: '10px 14px', background: 'rgba(255,255,255,0.03)',
-                      borderRadius: 8, fontSize: 13, color: 'var(--text-secondary)',
-                      borderLeft: `3px solid ${riskColor}`,
-                    }}>
+                    <div key={i} className="p-5 rounded-lg text-xs font-bold uppercase tracking-wider leading-relaxed border border-[#333] bg-[#0a0a0a] text-zinc-300">
                       {rec}
                     </div>
                   ))}

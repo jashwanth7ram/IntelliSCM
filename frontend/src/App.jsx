@@ -18,18 +18,22 @@ import MLInsights         from './pages/MLInsights'
 
 function AppLayout({ children }) {
   const { user } = useAuth()
-  if (!user) return children
+  if (!user) return <>{children}</>
   return (
-    <div className="app-layout">
+    <div className="flex min-h-screen bg-background text-textMain">
       <Sidebar />
-      <main className="main-content">{children}</main>
+      <main className="flex-1 flex flex-col items-center justify-start p-6 md:p-10 ml-0 md:ml-64 transition-all overflow-x-hidden">
+        <div className="w-full max-w-6xl">
+          {children}
+        </div>
+      </main>
     </div>
   )
 }
 
 function RootRedirect() {
   const { user, loading } = useAuth()
-  if (loading) return <div className="loading-container"><div className="spinner" /></div>
+  if (loading) return <div className="flex h-screen items-center justify-center"><span className="loading loading-spinner loading-lg text-primary"></span></div>
   if (!user) return <Navigate to="/login" replace />
   const routes = {
     Developer: '/developer',

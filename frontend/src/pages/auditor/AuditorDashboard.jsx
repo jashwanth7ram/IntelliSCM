@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { baselinesAPI, auditsAPI, crsAPI } from '../../services/api'
-import { CheckSquare, Plus, X, Check, FileText } from 'lucide-react'
+import { FaArrowRight, FaPlus, FaTimes } from 'react-icons/fa'
 
 const AUDIT_TYPES = ['FCA', 'PCA']
 
@@ -35,7 +35,7 @@ export default function AuditorDashboard() {
     e.preventDefault(); setBLoading(true); setMsg('')
     try {
       await baselinesAPI.create(baseline)
-      setMsg('✅ Baseline created successfully!')
+      setMsg('Baseline created successfully.')
       setShowBaseline(false)
       setBaseline({ version: '', description: '', project: '' })
     } catch (err) {
@@ -48,7 +48,7 @@ export default function AuditorDashboard() {
     e.preventDefault(); setALoading(true); setMsg('')
     try {
       await auditsAPI.create(audit)
-      setMsg('✅ Audit scheduled successfully!')
+      setMsg('Audit scheduled successfully.')
       setShowAudit(false)
       setAudit({ auditType: 'FCA', scheduledDate: '', notes: '' })
     } catch (err) {
@@ -58,74 +58,78 @@ export default function AuditorDashboard() {
   }
 
   const approved = crs.filter(c => c.status === 'Approved').length
+  const pending = crs.filter(c => c.status === 'Pending').length
 
   return (
-    <div className="fade-in">
-      <div className="page-header">
-        <h1 className="page-title">📋 Auditor Dashboard</h1>
-        <p className="page-subtitle">Manage baselines, schedule FCA/PCA audits, and review approval trail</p>
+    <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
+      <div className="mb-16 pt-8">
+        <h1 className="text-5xl font-black text-white tracking-tighter uppercase mb-4">
+          SYSTEM<br/><span className="text-primary">AUDITOR</span>
+        </h1>
+        <p className="text-sm font-medium uppercase tracking-widest text-zinc-500">Manage baselines, schedule FCA/PCA audits, and review approval trail.</p>
       </div>
 
-      <div className="stats-grid" style={{ marginBottom: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
         {[
-          { label: 'Approved CRs',  value: approved,   icon: '✅', color: 'var(--emerald)' },
-          { label: 'Total CRs',     value: crs.length, icon: '📋', color: 'var(--blue)' },
-          { label: 'Pending Review', value: crs.filter(c=>c.status==='Pending').length, icon: '⏳', color: 'var(--yellow)' },
-        ].map(s => (
-          <div key={s.label} className="glass stat-card" style={{ '--accent-color': s.color }}>
-            <div className="stat-value">{s.value}</div>
-            <div className="stat-label">{s.label}</div>
-            <div className="stat-icon">{s.icon}</div>
+          { label: 'Approved CRs',   value: approved,   num: '01' },
+          { label: 'Total CRs',      value: crs.length, num: '02' },
+          { label: 'Pending Review', value: pending,    num: '03' },
+        ].map((s, i) => (
+          <div key={i} className="bg-[#111] border border-[#222] rounded-xl p-8 hover:bg-[#161616] transition-colors relative group">
+            <div className="text-primary font-bold text-sm mb-8 bg-primary/10 w-fit px-2 py-1 rounded inline-block">{s.num}</div>
+            <div className="text-6xl font-black text-white mb-4">{s.value}</div>
+            <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">{s.label}</div>
+            <FaArrowRight className="absolute top-8 right-8 text-zinc-700 group-hover:text-primary transition-colors" />
           </div>
         ))}
       </div>
 
-      {msg && <div className="alert alert-success" style={{ marginBottom: 20 }}>{msg}</div>}
+      {msg && <div className="bg-primary/20 border border-primary text-white px-6 py-4 rounded-lg mb-8 text-sm font-bold tracking-wide uppercase">{msg}</div>}
 
       {/* Actions */}
       {isBaselinesView ? (
-      <div className="section">
-        <div className="section-header">
-          <h2 className="section-title">Audit Actions</h2>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button className="btn btn-primary btn-sm" onClick={() => { setShowBaseline(s=>!s); setShowAudit(false) }}>
-              <FileText size={14} /> Create Baseline
+      <div className="mb-16">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">AUDIT ACTIONS</h2>
+          <div className="flex gap-4">
+            <button className="bg-primary hover:bg-primaryHover text-[#050505] font-black uppercase tracking-widest px-6 py-3 rounded-lg transition-all text-xs" onClick={() => { setShowBaseline(s=>!s); setShowAudit(false) }}>
+              Create Baseline
             </button>
-            <button className="btn btn-secondary btn-sm" onClick={() => { setShowAudit(s=>!s); setShowBaseline(false) }}>
-              <CheckSquare size={14} /> Schedule Audit
+            <button className="bg-transparent border border-zinc-700 hover:border-white text-zinc-400 hover:text-white font-black uppercase tracking-widest px-6 py-3 rounded-lg transition-all text-xs" onClick={() => { setShowAudit(s=>!s); setShowBaseline(false) }}>
+              Schedule Audit
             </button>
           </div>
         </div>
 
         {/* Baseline Form */}
         {showBaseline && (
-          <div className="glass" style={{ padding: 24, marginBottom: 16 }}>
-            <h3 style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>Create Version Baseline</h3>
-            <form onSubmit={createBaseline} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="grid-2">
-                <div className="form-group">
-                  <label className="form-label">Version Tag *</label>
-                  <input className="form-control" placeholder="e.g. v1.4.2"
-                    value={baseline.version} onChange={setB('version')} required />
+          <div className="bg-[#111] border border-[#222] rounded-xl p-8 sm:p-10 mb-10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+            <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-8">CREATE VERSION BASELINE</h3>
+            <form onSubmit={createBaseline} className="flex flex-col gap-6 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Version Tag *</label>
+                  <input type="text" className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-5 py-4 rounded-lg outline-none text-sm placeholder-zinc-700" 
+                    placeholder="V1.4.2" value={baseline.version} onChange={setB('version')} required />
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Project ID</label>
-                  <input className="form-control" placeholder="Project identifier"
-                    value={baseline.project} onChange={setB('project')} />
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Project ID</label>
+                  <input type="text" className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-5 py-4 rounded-lg outline-none text-sm placeholder-zinc-700" 
+                    placeholder="PROJECT IDENTIFIER" value={baseline.project} onChange={setB('project')} />
                 </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">Description</label>
-                <textarea className="form-control" style={{ minHeight: 70 }}
-                  placeholder="What does this baseline represent?"
-                  value={baseline.description} onChange={setB('description')} />
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Description</label>
+                <textarea className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-5 py-4 rounded-lg outline-none text-sm min-h-[120px] placeholder-zinc-700 leading-relaxed" 
+                  placeholder="WHAT DOES THIS BASELINE REPRESENT?" value={baseline.description} onChange={setB('description')} />
               </div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <button type="submit" className="btn btn-primary btn-sm" disabled={bLoading}>
-                  {bLoading ? 'Creating…' : <><Check size={14}/> Create Baseline</>}
+              <div className="flex flex-wrap gap-4 mt-4">
+                <button type="submit" className="bg-primary hover:bg-primaryHover text-[#050505] font-black uppercase tracking-widest px-10 py-4 rounded-lg transition-all text-xs" disabled={bLoading}>
+                  {bLoading ? 'Creating...' : 'Create Baseline'}
                 </button>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowBaseline(false)}>
-                  <X size={14}/> Cancel
+                <button type="button" className="bg-transparent border border-zinc-700 hover:border-white text-zinc-400 hover:text-white font-black uppercase tracking-widest px-8 py-4 rounded-lg transition-all text-xs" onClick={() => setShowBaseline(false)}>
+                  Cancel
                 </button>
               </div>
             </form>
@@ -134,34 +138,35 @@ export default function AuditorDashboard() {
 
         {/* Audit Form */}
         {showAudit && (
-          <div className="glass" style={{ padding: 24, marginBottom: 16 }}>
-            <h3 style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>Schedule Audit</h3>
-            <form onSubmit={scheduleAudit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="grid-2">
-                <div className="form-group">
-                  <label className="form-label">Audit Type</label>
-                  <select className="form-control" value={audit.auditType} onChange={setA('auditType')}>
+          <div className="bg-[#111] border border-[#222] rounded-xl p-8 sm:p-10 mb-10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+            <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-8">SCHEDULE AUDIT</h3>
+            <form onSubmit={scheduleAudit} className="flex flex-col gap-6 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Audit Type</label>
+                  <select className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-5 py-4 rounded-lg outline-none text-sm appearance-none" 
+                    value={audit.auditType} onChange={setA('auditType')}>
                     {AUDIT_TYPES.map(t => <option key={t}>{t}</option>)}
                   </select>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Scheduled Date *</label>
-                  <input type="date" className="form-control"
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Scheduled Date *</label>
+                  <input type="date" className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-5 py-4 rounded-lg outline-none text-sm" 
                     value={audit.scheduledDate} onChange={setA('scheduledDate')} required />
                 </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">Notes</label>
-                <textarea className="form-control" style={{ minHeight: 70 }}
-                  placeholder="Audit scope and objectives…"
-                  value={audit.notes} onChange={setA('notes')} />
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Notes</label>
+                <textarea className="w-full bg-[#0a0a0a] border border-[#333] focus:border-primary transition-colors text-white px-5 py-4 rounded-lg outline-none text-sm min-h-[120px] placeholder-zinc-700 leading-relaxed" 
+                  placeholder="AUDIT SCOPE AND OBJECTIVES..." value={audit.notes} onChange={setA('notes')} />
               </div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <button type="submit" className="btn btn-primary btn-sm" disabled={aLoading}>
-                  {aLoading ? 'Scheduling…' : <><Check size={14}/> Schedule Audit</>}
+              <div className="flex flex-wrap gap-4 mt-4">
+                <button type="submit" className="bg-primary hover:bg-primaryHover text-[#050505] font-black uppercase tracking-widest px-10 py-4 rounded-lg transition-all text-xs" disabled={aLoading}>
+                  {aLoading ? 'Scheduling...' : 'Schedule Audit'}
                 </button>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowAudit(false)}>
-                  <X size={14}/> Cancel
+                <button type="button" className="bg-transparent border border-zinc-700 hover:border-white text-zinc-400 hover:text-white font-black uppercase tracking-widest px-8 py-4 rounded-lg transition-all text-xs" onClick={() => setShowAudit(false)}>
+                  Cancel
                 </button>
               </div>
             </form>
@@ -169,37 +174,52 @@ export default function AuditorDashboard() {
         )}
       </div>
       ) : (
-      <div className="section">
-        <div className="section-header"><h2 className="section-title">Approved Change Audit Trail</h2></div>
-        <div className="glass">
-          {loading ? (
-            <div className="loading-container"><div className="spinner" /></div>
-          ) : (
-            <div className="table-wrapper">
-              <table>
+      <div className="mb-16">
+        <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8">APPROVED CHANGE TRAIL</h2>
+        <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
+          <div className="p-0 overflow-x-auto">
+            {loading ? (
+              <div className="flex justify-center items-center py-32 px-6">
+                <span className="loading loading-spinner text-primary loading-lg"></span>
+              </div>
+            ) : (
+              <table className="w-full whitespace-nowrap text-left">
                 <thead>
-                  <tr><th>CR Title</th><th>Type</th><th>Priority</th><th>Risk</th><th>Status</th><th>Date</th></tr>
+                  <tr className="bg-[#0a0a0a] border-b border-[#222] text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                    <th className="px-8 py-5">CR Title</th>
+                    <th className="px-8 py-5">Type</th>
+                    <th className="px-8 py-5">Priority</th>
+                    <th className="px-8 py-5">Risk</th>
+                    <th className="px-8 py-5">Status</th>
+                    <th className="px-8 py-5">Date</th>
+                  </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-sm">
                   {crs.filter(c => c.status === 'Approved').map(cr => (
-                    <tr key={cr._id}>
-                      <td style={{ fontWeight: 500 }}>{cr.title}</td>
-                      <td><span className="badge badge-pending">{cr.changeType}</span></td>
-                      <td>{cr.priority}</td>
-                      <td><span className={`badge badge-${(cr.riskScore||'Low').toLowerCase()}`}>{cr.riskScore||'Low'}</span></td>
-                      <td><span className="badge badge-approved">Approved</span></td>
-                      <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                    <tr key={cr._id} className="border-b border-[#222] hover:bg-[#161616] transition-colors">
+                      <td className="px-8 py-5 font-bold text-white max-w-[250px] truncate">{cr.title}</td>
+                      <td className="px-8 py-5"><span className="text-xs font-medium text-zinc-400 bg-[#222] px-3 py-1 rounded">{cr.changeType}</span></td>
+                      <td className="px-8 py-5 font-medium text-zinc-300">{cr.priority}</td>
+                      <td className="px-8 py-5">
+                        <span className={`text-xs font-bold px-3 py-1 rounded ${cr.riskScore === 'High' ? 'text-[#050505] bg-primary' : cr.riskScore === 'Medium' ? 'text-yellow-500 bg-yellow-500/10' : 'text-emerald-500 bg-emerald-500/10'}`}>
+                          {cr.riskScore || 'Low'}
+                        </span>
+                      </td>
+                      <td className="px-8 py-5">
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-500">Approved</span>
+                      </td>
+                      <td className="px-8 py-5 text-zinc-600 text-xs font-mono">
                         {cr.updatedAt ? new Date(cr.updatedAt).toLocaleDateString() : '—'}
                       </td>
                     </tr>
                   ))}
                   {crs.filter(c => c.status === 'Approved').length === 0 && (
-                    <tr><td colSpan={6} style={{ textAlign: 'center', padding: 32, color: 'var(--text-muted)' }}>No approved CRs yet.</td></tr>
+                    <tr><td colSpan={6} className="text-center py-16 text-xs font-bold uppercase tracking-widest text-zinc-600">No approved CRs yet.</td></tr>
                   )}
                 </tbody>
               </table>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
       )}

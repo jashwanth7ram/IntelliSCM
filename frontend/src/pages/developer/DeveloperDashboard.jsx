@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
 import { crsAPI } from '../../services/api'
-import { GitPullRequest, Clock, CheckCircle, XCircle, AlertTriangle, Cpu } from 'lucide-react'
+import { FaCodeBranch, FaBrain, FaArrowRight } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-
-const RISK_CLASS = { High: 'high', Medium: 'medium', Low: 'low' }
-const STATUS_CLASS = { Pending: 'pending', Approved: 'approved', Rejected: 'rejected', 'Request Modification': 'medium' }
 
 export default function DeveloperDashboard() {
   const { user } = useAuth()
@@ -27,87 +24,108 @@ export default function DeveloperDashboard() {
   const rejected = myCrs.filter(c => c.status === 'Rejected').length
 
   return (
-    <div className="fade-in">
-      <div className="page-header">
-        <h1 className="page-title">👨‍💻 Developer Dashboard</h1>
-        <p className="page-subtitle">Track your change requests and code risk analysis</p>
+    <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
+      <div className="mb-16 pt-8">
+        <h1 className="text-5xl font-black text-white tracking-tighter uppercase mb-4">
+          DEVELOPER<br/><span className="text-primary">DASHBOARD</span>
+        </h1>
+        <p className="text-sm font-medium uppercase tracking-widest text-zinc-500">Track change requests and code risk.</p>
       </div>
 
       {/* Stats */}
-      <div className="stats-grid" style={{ marginBottom: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
         {[
-          { label: 'Total CRs',  value: myCrs.length, icon: '📋', color: 'var(--blue)' },
-          { label: 'Pending',    value: pending,       icon: '⏳', color: 'var(--yellow)' },
-          { label: 'Approved',   value: approved,      icon: '✅', color: 'var(--emerald)' },
-          { label: 'Rejected',   value: rejected,      icon: '❌', color: 'var(--red)' },
-        ].map(s => (
-          <div key={s.label} className="glass stat-card" style={{ '--accent-color': s.color }}>
-            <div className="stat-value">{s.value}</div>
-            <div className="stat-label">{s.label}</div>
-            <div className="stat-icon">{s.icon}</div>
+          { label: 'Total CRs',  value: myCrs.length, num: '01' },
+          { label: 'Pending',    value: pending,      num: '02' },
+          { label: 'Approved',   value: approved,     num: '03' },
+          { label: 'Rejected',   value: rejected,     num: '04' },
+        ].map((s, i) => (
+          <div key={i} className="bg-[#111] border border-[#222] rounded-xl p-8 hover:bg-[#161616] transition-colors relative group">
+            <div className="text-primary font-bold text-sm mb-8 bg-primary/10 w-fit px-2 py-1 rounded inline-block">{s.num}</div>
+            <div className={`text-6xl font-black text-white mb-4 ${s.label === 'Pending' ? 'text-zinc-400' : s.label === 'Approved' ? 'text-white' : s.label === 'Rejected' ? 'text-zinc-600' : 'text-white'}`}>{s.value}</div>
+            <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">{s.label}</div>
+            <FaArrowRight className="absolute top-8 right-8 text-zinc-700 group-hover:text-primary transition-colors" />
           </div>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="section">
-        <div className="section-header"><h2 className="section-title">Quick Actions</h2></div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Link to="/developer/submit-cr" className="btn btn-primary">
-            <GitPullRequest size={16} /> Submit Change Request
-          </Link>
-          <Link to="/ml-insights" className="btn btn-secondary">
-            <Cpu size={16} /> ML Risk Analysis
-          </Link>
-        </div>
+      <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8">SERVICES</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+        <Link to="/developer/submit-cr" className="bg-[#111] border border-[#222] rounded-xl p-10 hover:border-primary transition-colors group flex flex-col justify-between min-h-[220px]">
+          <div>
+            <div className="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-6">
+              <FaCodeBranch size={20} />
+            </div>
+            <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-3">Submit Change Request</h3>
+            <p className="text-sm text-zinc-500 leading-relaxed">Propose new features, bug fixes, or architectural changes directly into the automated pipeline.</p>
+          </div>
+          <div className="mt-8 flex items-center text-xs font-bold text-primary uppercase tracking-widest gap-2">
+            Get Started <FaArrowRight />
+          </div>
+        </Link>
+        <Link to="/ml-insights" className="bg-[#111] border border-[#222] rounded-xl p-10 hover:border-primary transition-colors group flex flex-col justify-between min-h-[220px]">
+          <div>
+            <div className="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-6">
+              <FaBrain size={20} />
+            </div>
+            <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-3">ML Risk Analysis</h3>
+            <p className="text-sm text-zinc-500 leading-relaxed">Predict defect probability using our RandomForest model trained on NASA JM1 software metrics.</p>
+          </div>
+          <div className="mt-8 flex items-center text-xs font-bold text-primary uppercase tracking-widest gap-2">
+            Analyze Code <FaArrowRight />
+          </div>
+        </Link>
       </div>
 
       {/* My Change Requests */}
-      <div className="section">
-        <div className="section-header">
-          <h2 className="section-title">My Change Requests</h2>
-        </div>
-        <div className="glass">
+      <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-8">RECENT WORK</h2>
+      <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
+        <div className="p-0 overflow-x-auto">
           {loading ? (
-            <div className="loading-container"><div className="spinner" /><p>Loading CRs…</p></div>
+            <div className="flex justify-center items-center py-32 px-6">
+              <span className="loading loading-spinner text-primary loading-lg"></span>
+            </div>
           ) : myCrs.length === 0 ? (
-            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <GitPullRequest size={40} style={{ marginBottom: 12, opacity: 0.3 }} />
-              <p>No change requests yet. Submit your first one!</p>
+            <div className="flex flex-col items-center justify-center py-32 px-6 text-zinc-600">
+              <FaCodeBranch size={48} className="opacity-20 mb-6" />
+              <p className="text-sm font-bold uppercase tracking-widest">No recent work found.</p>
             </div>
           ) : (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Title</th><th>Type</th><th>Priority</th>
-                    <th>Risk Score</th><th>Status</th><th>Date</th>
+            <table className="w-full whitespace-nowrap text-left">
+              <thead>
+                <tr className="bg-[#0a0a0a] border-b border-[#222] text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                  <th className="px-8 py-5">Title</th>
+                  <th className="px-8 py-5">Type</th>
+                  <th className="px-8 py-5">Priority</th>
+                  <th className="px-8 py-5">Risk</th>
+                  <th className="px-8 py-5">Status</th>
+                  <th className="px-8 py-5">Date</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                {myCrs.map(cr => (
+                  <tr key={cr._id} className="border-b border-[#222] hover:bg-[#161616] transition-colors">
+                    <td className="px-8 py-5 font-bold text-white max-w-[250px] truncate">{cr.title}</td>
+                    <td className="px-8 py-5"><span className="text-xs font-medium text-zinc-400 bg-[#222] px-3 py-1 rounded">{cr.changeType}</span></td>
+                    <td className="px-8 py-5 font-medium text-zinc-300">{cr.priority}</td>
+                    <td className="px-8 py-5">
+                      <span className={`text-xs font-bold px-3 py-1 rounded ${cr.riskScore === 'High' ? 'text-[#050505] bg-primary' : cr.riskScore === 'Medium' ? 'text-yellow-500 bg-yellow-500/10' : 'text-emerald-500 bg-emerald-500/10'}`}>
+                        {cr.riskScore || 'N/A'}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className={`text-xs font-bold uppercase tracking-wider ${cr.status === 'Approved' ? 'text-emerald-500' : cr.status === 'Rejected' ? 'text-zinc-500' : 'text-primary'}`}>
+                        {cr.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-zinc-600 text-xs font-mono">
+                      {cr.createdAt ? new Date(cr.createdAt).toLocaleDateString() : '—'}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {myCrs.map(cr => (
-                    <tr key={cr._id}>
-                      <td style={{ fontWeight: 500 }}>{cr.title}</td>
-                      <td><span className="badge badge-pending">{cr.changeType}</span></td>
-                      <td>{cr.priority}</td>
-                      <td>
-                        <span className={`badge badge-${RISK_CLASS[cr.riskScore] || 'low'}`}>
-                          {cr.riskScore || 'N/A'}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={`badge badge-${STATUS_CLASS[cr.status] || 'pending'}`}>
-                          {cr.status}
-                        </span>
-                      </td>
-                      <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>
-                        {cr.createdAt ? new Date(cr.createdAt).toLocaleDateString() : '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </div>
