@@ -63,9 +63,6 @@ export default function CCBDashboard() {
           <div key={i} className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl p-6 hover:bg-white/[0.04] transition-colors relative group">
             <div className="text-4xl font-black text-white tracking-tight mb-2">{s.value}</div>
             <div className="text-sm font-medium text-textMuted">{s.label}</div>
-            <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/[0.02] border border-white/[0.05] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-              <FaArrowRight className="text-primary text-xs" />
-            </div>
           </div>
         ))}
       </div>
