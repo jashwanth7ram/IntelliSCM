@@ -47,7 +47,7 @@ export default function Sidebar() {
     <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#050505] border-r border-[#1a1a1a] flex flex-col z-50 font-sans">
       <div className="h-24 flex items-center px-8 border-b border-[#1a1a1a]">
         <div>
-          <h1 className="text-2xl font-black tracking-tighter text-white uppercase"><span className="text-primary">NOIR</span>SCM</h1>
+          <h1 className="text-2xl font-black tracking-tighter text-white uppercase"><span className="text-primary">INTELLI</span>SCM</h1>
         </div>
       </div>
 
