@@ -54,7 +54,7 @@ npm install
 npm run dev
 ```
 
-Navigate to `http://localhost:5173` to interact with the application.
+Navigate to `intelli-scm.vercel.app` to interact with the application.
 
 ## Roles & Access
 The application features a fully protected dashboard system based on User Roles:
