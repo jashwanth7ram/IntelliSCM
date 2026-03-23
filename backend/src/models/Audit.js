@@ -1,0 +1,16 @@
+const mongoose = require('mongoose');
+
+const auditSchema = new mongoose.Schema({
+  project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
+  auditor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  auditType: { 
+    type: String, 
+    enum: ['FCA', 'PCA'], // Functional Configuration Audit / Physical Configuration Audit
+    required: true
+  },
+  auditDate: { type: Date, required: true },
+  auditReportUrl: { type: String },
+  complianceNotes: { type: String }
+}, { timestamps: true });
+
+module.exports = mongoose.model('Audit', auditSchema);
