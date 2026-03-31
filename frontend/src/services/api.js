@@ -65,6 +65,13 @@ export const auditsAPI = {
   create: (data) => api.post('/audits', data),
 }
 
+// ─── Notifications ───────────────────────────────────
+export const notificationsAPI = {
+  list:   ()   => api.get('/notifications'),
+  markRead: (id) => api.patch(`/notifications/${id}/read`),
+}
+
+
 // ─── Reports ────────────────────────────────────────
 export const reportsAPI = {
   changeActivity: () => api.get('/reports?reportType=change_activity'),
