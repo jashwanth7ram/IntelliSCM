@@ -52,6 +52,8 @@ router.use(authMiddleware);
  *         description: Forbidden
  */
 router.post('/', roleMiddleware(['Auditor', 'Admin']), auditController.scheduleAudit);
+router.get('/', auditController.listAll);
+
 
 /**
  * @swagger

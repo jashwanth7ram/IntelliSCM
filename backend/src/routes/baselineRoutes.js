@@ -56,8 +56,9 @@ router.use(authMiddleware);
  *       403:
  *         description: Forbidden
  */
-// Only PMs or Admins can create baselines typically
 router.post('/', roleMiddleware(['Project Manager', 'Admin']), baselineController.createBaseline);
+router.get('/', baselineController.listAll);
+
 
 /**
  * @swagger

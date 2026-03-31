@@ -34,3 +34,15 @@ exports.getBaselinesForProject = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.listAll = async (req, res) => {
+  try {
+    const baselines = await Baseline.find()
+      .populate('project', 'name')
+      .populate('createdBy', 'name')
+      .sort({ createdAt: -1 });
+    res.json(baselines);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

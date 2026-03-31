@@ -36,6 +36,19 @@ exports.getAuditsForProject = async (req, res) => {
     }
 };
 
+exports.listAll = async (req, res) => {
+  try {
+    const audits = await Audit.find()
+      .populate('project', 'name')
+      .populate('auditor', 'name')
+      .sort({ createdAt: -1 });
+    res.json(audits);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 exports.updateAudit = async (req, res) => {
   try {
     const audit = await Audit.findByIdAndUpdate(

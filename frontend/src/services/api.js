@@ -57,11 +57,13 @@ export const ccbAPI = {
 
 // ─── Baselines ──────────────────────────────────────
 export const baselinesAPI = {
+  list:   ()     => api.get('/baselines'),
   create: (data) => api.post('/baselines', data),
 }
 
 // ─── Audits ─────────────────────────────────────────
 export const auditsAPI = {
+  list:   ()     => api.get('/audits'),
   create: (data) => api.post('/audits', data),
 }
 

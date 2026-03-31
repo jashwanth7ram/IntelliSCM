@@ -42,11 +42,20 @@ export default function AuditorDashboard() {
   const [audit, setAudit]     = useState({ auditType: 'FCA', auditDate: '', auditLocation: '', notes: '', project: '' })
   const [aLoading, setALoading] = useState(false)
 
+  // History
+  const [auditHistory, setAuditHistory]       = useState([])
+  const [baselineHistory, setBaselineHistory] = useState([])
+
+  const loadHistory = () => Promise.all([auditsAPI.list(), baselinesAPI.list()])
+    .then(([a, b]) => { setAuditHistory(a.data || []); setBaselineHistory(b.data || []) })
+    .catch(() => {})
+
   useEffect(() => {
     Promise.all([crsAPI.list(), projectsAPI.list()])
       .then(([c, p]) => { setCrs(c.data || []); setProjects(p.data || []) })
       .catch(() => flash('error', 'Failed to load data.'))
       .finally(() => setLoading(false))
+    loadHistory()
   }, [])
 
   const setB = (k) => (e) => setBaseline(x => ({ ...x, [k]: e.target.value }))
@@ -60,7 +69,8 @@ export default function AuditorDashboard() {
   const createBaseline = async (e) => {
     e.preventDefault(); setBLoading(true)
     try {
-      await baselinesAPI.create(baseline)
+      const res = await baselinesAPI.create(baseline)
+      setBaselineHistory(h => [res.data, ...h])
       flash('success', '✓ Baseline committed successfully.')
       setBaseline({ versionNumber: '', description: '', project: '' })
       setActiveForm(null)
@@ -73,7 +83,8 @@ export default function AuditorDashboard() {
     e.preventDefault(); setALoading(true)
     try {
       const { notes, ...rest } = audit
-      await auditsAPI.create({ ...rest, complianceNotes: notes })
+      const res = await auditsAPI.create({ ...rest, complianceNotes: notes })
+      setAuditHistory(h => [res.data, ...h])
       flash('success', '✓ Audit scheduled successfully.')
       setAudit({ auditType: 'FCA', auditDate: '', auditLocation: '', notes: '', project: '' })
       setActiveForm(null)
@@ -216,14 +227,97 @@ export default function AuditorDashboard() {
           </div>
         )}
 
-        {!activeForm && (
-          <div className="bg-white/[0.02] border border-white/[0.04] rounded-2xl flex items-center justify-center py-20">
+        {!activeForm && (auditHistory.length === 0 && baselineHistory.length === 0) && (
+          <div className="bg-white/[0.02] border border-white/[0.04] rounded-2xl flex items-center justify-center py-16 mb-8">
             <p className="text-sm text-white/30">Select an action above to get started.</p>
+          </div>
+        )}
+
+        {/* ── Audit History ── */}
+        {auditHistory.length > 0 && (
+          <div className="mb-10">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <FaShieldAlt className="text-blue-400" size={15} /> Scheduled Audits
+            </h3>
+            <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl overflow-hidden">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-white/[0.05] text-xs font-semibold text-textMuted uppercase tracking-wider bg-white/[0.01]">
+                    <th className="px-5 py-3">Type</th>
+                    <th className="px-5 py-3">Project</th>
+                    <th className="px-5 py-3">Date</th>
+                    <th className="px-5 py-3">Location</th>
+                    <th className="px-5 py-3">Notes</th>
+                    <th className="px-5 py-3 text-right">Scheduled</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.025]">
+                  {auditHistory.map(a => (
+                    <tr key={a._id} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                          {a.auditType}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-textMuted">{a.project?.name || '—'}</td>
+                      <td className="px-5 py-3 text-white font-medium">
+                        {a.auditDate ? new Date(a.auditDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                      </td>
+                      <td className="px-5 py-3 text-textMuted">{a.auditLocation || '—'}</td>
+                      <td className="px-5 py-3 text-textMuted max-w-[200px] truncate">{a.complianceNotes || '—'}</td>
+                      <td className="px-5 py-3 text-textMuted text-right text-xs">
+                        {a.createdAt ? new Date(a.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── Baseline History ── */}
+        {baselineHistory.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <FaRegFileAlt className="text-primary" size={15} /> Committed Baselines
+            </h3>
+            <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl overflow-hidden">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-white/[0.05] text-xs font-semibold text-textMuted uppercase tracking-wider bg-white/[0.01]">
+                    <th className="px-5 py-3">Version</th>
+                    <th className="px-5 py-3">Project</th>
+                    <th className="px-5 py-3">Description</th>
+                    <th className="px-5 py-3">Created By</th>
+                    <th className="px-5 py-3 text-right">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.025]">
+                  {baselineHistory.map(b => (
+                    <tr key={b._id} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono">
+                          {b.versionNumber}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-textMuted">{b.project?.name || '—'}</td>
+                      <td className="px-5 py-3 text-white max-w-[240px] truncate">{b.description}</td>
+                      <td className="px-5 py-3 text-textMuted">{b.createdBy?.name || '—'}</td>
+                      <td className="px-5 py-3 text-textMuted text-right text-xs">
+                        {b.createdAt ? new Date(b.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
     )
   }
+
 
   // ─── AUDIT DASHBOARD (CR trail) ────────────────────────────────
   return (
