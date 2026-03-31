@@ -8,7 +8,7 @@ const approvalDecisionSchema = new mongoose.Schema({
     enum: ['Approve', 'Reject', 'Request Modification', 'Approved', 'Rejected'],
     required: true
   },
-  comments: { type: String, required: true },
+  comments: { type: String, default: '' },
   decidedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 

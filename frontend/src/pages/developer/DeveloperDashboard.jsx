@@ -114,7 +114,7 @@ export default function DeveloperDashboard() {
                         <div className="font-semibold text-white max-w-[300px] truncate">{cr.title}</div>
                         <div className="text-xs text-textMuted mt-1">{cr.changeType}</div>
                       </td>
-                      <td className="px-6 py-4 font-medium text-zinc-300">{cr.priority}</td>
+                      <td className="px-6 py-4 font-medium text-zinc-300">{cr.priorityLevel || 'Medium'}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${cr.riskScore === 'High' ? 'text-red-400 bg-red-400/10 border border-red-400/20' : cr.riskScore === 'Medium' ? 'text-amber-400 bg-amber-400/10 border border-amber-400/20' : 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20'}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${cr.riskScore === 'High' ? 'bg-red-400' : cr.riskScore === 'Medium' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>

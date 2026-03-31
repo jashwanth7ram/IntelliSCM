@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
     emailService.sendLoginEmail(user.email, user.name);
 
     const token = generateToken(user._id);
-    res.status(201).json({ user: { id: user._id, username: user.username, role: user.role }, token });
+    res.status(201).json({ user: { id: user._id, name: user.name, email: user.email, username: user.username, role: user.role }, token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
     emailService.sendLoginEmail(user.email, user.name);
 
     const token = generateToken(user._id);
-    res.json({ user: { id: user._id, username: user.username, role: user.role }, token });
+    res.json({ user: { id: user._id, name: user.name, email: user.email, username: user.username, role: user.role }, token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

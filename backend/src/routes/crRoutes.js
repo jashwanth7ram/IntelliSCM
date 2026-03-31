@@ -103,6 +103,9 @@ router.post('/', roleMiddleware(['Developer', 'Project Manager', 'CCB Member']),
  *       404:
  *         description: CR not found
  */
+// PATCH /api/crs/:id/status  — Status Accounting (IEEE 828 §5.4) — MUST be before /:id
+router.patch('/:id/status', roleMiddleware(['CCB Member', 'Project Manager', 'Admin']), crController.updateCRStatus);
+
 router.patch('/:id', roleMiddleware(['Developer', 'Project Manager', 'CCB Member']), crController.updateCR);
 
 /**
@@ -145,8 +148,5 @@ router.get('/', crController.getCRs);
  */
 router.get('/status-report', crController.getStatusReport);
 router.get('/:id', crController.getCRById);
-
-// PATCH /api/crs/:id/status  — Status Accounting transition log (IEEE 828 §5.4)
-router.patch('/:id/status', roleMiddleware(['CCB Member', 'Project Manager', 'Admin']), crController.updateCRStatus);
 
 module.exports = router;

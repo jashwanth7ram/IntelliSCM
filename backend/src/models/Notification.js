@@ -8,7 +8,9 @@ const notificationSchema = new mongoose.Schema({
     enum: [
       'CR_SUBMITTED', 
       'CR_APPROVED', 
-      'CR_REJECTED', 
+      'CR_REJECTED',
+      'CR_STATUS_CHANGED',
+      'CR_NEEDS_MODIFICATION',
       'BASELINE_CREATED', 
       'AUDIT_SCHEDULED'
     ],

@@ -1,5 +1,6 @@
 const ConfigurationItem = require('../models/ConfigurationItem');
 const Project = require('../models/Project');
+const mongoose = require('mongoose');
 
 // GET /api/cis?project=<id>
 exports.getCIs = async (req, res) => {
@@ -114,11 +115,11 @@ exports.getCIStats = async (req, res) => {
     const [total, byType, byStatus] = await Promise.all([
       ConfigurationItem.countDocuments({ project: projectId }),
       ConfigurationItem.aggregate([
-        { $match: { project: require('mongoose').Types.ObjectId.createFromHexString(projectId) } },
+        { $match: { project: new mongoose.Types.ObjectId(projectId) } },
         { $group: { _id: '$type', count: { $sum: 1 } } }
       ]),
       ConfigurationItem.aggregate([
-        { $match: { project: require('mongoose').Types.ObjectId.createFromHexString(projectId) } },
+        { $match: { project: new mongoose.Types.ObjectId(projectId) } },
         { $group: { _id: '$status', count: { $sum: 1 } } }
       ])
     ]);

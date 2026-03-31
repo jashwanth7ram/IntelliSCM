@@ -91,8 +91,8 @@ export default function CCBDashboard() {
                   <div>
                     <h3 className="text-2xl font-bold text-white tracking-tight mb-4">{cr.title}</h3>
                     <div className="flex flex-wrap gap-3 items-center">
-                      <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.05] text-white/70">{cr.changeType}</span>
-                      <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.05] text-white/70">{cr.priority} Priority</span>
+                      <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.05] text-white/70">{cr.changeType || 'N/A'}</span>
+                      <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.05] text-white/70">{cr.priorityLevel || 'Medium'} Priority</span>
                       <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border ${cr.riskScore === 'High' ? 'text-red-400 bg-red-400/10 border-red-400/20' : cr.riskScore === 'Medium' ? 'text-amber-400 bg-amber-400/10 border-amber-400/20' : 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${cr.riskScore === 'High' ? 'bg-red-400' : cr.riskScore === 'Medium' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
                         Risk: {cr.riskScore || 'Low'}
@@ -173,7 +173,7 @@ export default function CCBDashboard() {
                       {cr.riskScore || 'Low'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-medium text-zinc-300">{cr.priority}</td>
+                  <td className="px-6 py-4 font-medium text-zinc-300">{cr.priorityLevel || 'Medium'}</td>
                   <td className="px-6 py-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${cr.status === 'Approved' ? 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5' : cr.status === 'Rejected' ? 'text-zinc-400 border-zinc-400/20 bg-zinc-400/5' : 'text-primary border-primary/20 bg-primary/5'}`}>
                       {cr.status}
