@@ -81,7 +81,7 @@ export default function Login() {
             </div>
 
             <button type="submit" className="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-4 rounded-xl mt-4 transition-all text-sm shadow-[0_0_20px_rgba(45,104,255,0.4)]" disabled={loading}>
-              {loading ? 'Authenticating Identity...' : 'Continueto Dashboard'}
+              {loading ? 'Authenticating Identity...' : 'Continue to Dashboard'}
             </button>
           </form>
 

@@ -10,16 +10,18 @@ exports.scheduleAudit = async (req, res) => {
     
     await audit.save();
 
-    await notificationService.notifyProjectStakeholders(
+    // Non-blocking notification — never let this crash the response
+    notificationService.notifyProjectStakeholders(
       audit.project,
       `A new ${audit.auditType} Audit has been scheduled on ${new Date(audit.auditDate).toDateString()}`,
       'AUDIT_SCHEDULED',
       audit._id
-    );
+    ).catch(err => console.error('[auditController] notification failed:', err));
 
     res.status(201).json(audit);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('[auditController] scheduleAudit error:', error);
+    res.status(400).json({ error: error.message, details: error.errors });
   }
 };
 

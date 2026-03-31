@@ -10,16 +10,18 @@ exports.createBaseline = async (req, res) => {
 
     await baseline.save();
 
-    await notificationService.notifyProjectStakeholders(
+    // Non-blocking notification
+    notificationService.notifyProjectStakeholders(
       baseline.project,
       `New Baseline Created: v${baseline.versionNumber} - ${baseline.description}`,
       'BASELINE_CREATED',
       baseline._id
-    );
+    ).catch(err => console.error('[baselineController] notification failed:', err));
 
     res.status(201).json(baseline);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('[baselineController] createBaseline error:', error);
+    res.status(400).json({ error: error.message, details: error.errors });
   }
 };
 
