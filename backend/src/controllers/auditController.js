@@ -10,10 +10,10 @@ exports.scheduleAudit = async (req, res) => {
     
     await audit.save();
 
-    // Non-blocking notification — never let this crash the response
-    notificationService.notifyProjectStakeholders(
+    // Notify project stakeholders + all CCB Members
+    notificationService.notifyAuditStakeholders(
       audit.project,
-      `A new ${audit.auditType} Audit has been scheduled on ${new Date(audit.auditDate).toDateString()}`,
+      `📋 New ${audit.auditType} Audit scheduled on ${new Date(audit.auditDate).toDateString()} — please prepare documentation.`,
       'AUDIT_SCHEDULED',
       audit._id
     ).catch(err => console.error('[auditController] notification failed:', err));
