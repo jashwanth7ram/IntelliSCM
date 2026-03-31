@@ -23,19 +23,20 @@ export default function CCBDashboard() {
     if (!decision[crId]) return
     setDeciding(d => ({ ...d, [crId]: true }))
     try {
-      await ccbAPI.decide({
+      const r = await ccbAPI.decide({
         crId,
         decision: decision[crId],
         comments: comments[crId] || '',
       })
+      const newStatus = r.data?.crStatus || decision[crId]
       setCrs(prev => prev.map(c =>
-        c._id === crId ? { ...c, status: decision[crId] } : c
+        c._id === crId ? { ...c, status: newStatus } : c
       ))
       setMsg(`Decision processed: ${decision[crId]}`)
       setTimeout(() => setMsg(''), 3000)
     } catch (err) {
-      setMsg(err.response?.data?.message || 'Failed to submit decision.')
-      setTimeout(() => setMsg(''), 3000)
+      setMsg(err.response?.data?.error || err.response?.data?.message || 'Failed to submit decision.')
+      setTimeout(() => setMsg(''), 5000)
     } finally { setDeciding(d => ({ ...d, [crId]: false })) }
   }
 

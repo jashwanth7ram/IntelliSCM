@@ -7,31 +7,29 @@ import {
 
 const ROLE_NAV = {
   Developer: [
-    { to: '/developer', label: 'Dashboard', icon: FaHome },
-    { to: '/developer/submit-cr', label: 'Submit Request', icon: FaCodeBranch },
-    { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
+    { to: '/developer',           label: 'Dashboard',    icon: FaHome },
+    { to: '/developer/submit-cr', label: 'Submit CR',    icon: FaCodeBranch },
+    { to: '/ml-insights',         label: 'ML Insights',  icon: FaBrain },
   ],
   'Project Manager': [
-    { to: '/pm',             label: 'Dashboard',   icon: FaHome },
-    { to: '/pm/projects',   label: 'Projects',    icon: FaFolderOpen },
-    { to: '/ci-registry',   label: 'CI Registry', icon: FaLayerGroup },
-    { to: '/ml-insights',   label: 'ML Insights', icon: FaBrain },
+    { to: '/pm',           label: 'Dashboard',   icon: FaHome },
+    { to: '/pm/projects',  label: 'Projects',    icon: FaFolderOpen },
+    { to: '/ci-registry',  label: 'CI Registry', icon: FaLayerGroup },
+    { to: '/ml-insights',  label: 'ML Insights', icon: FaBrain },
   ],
   'CCB Member': [
-    { to: '/ccb', label: 'CCB Board', icon: FaShieldAlt },
+    { to: '/ccb',         label: 'CCB Board',   icon: FaShieldAlt },
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   Auditor: [
-    { to: '/auditor',          label: 'Audits',      icon: FaCheckSquare },
-    { to: '/auditor/baselines',label: 'Baselines',   icon: FaRegFileAlt },
-    { to: '/ci-registry',      label: 'CI Registry', icon: FaLayerGroup },
-    { to: '/ml-insights',      label: 'ML Insights', icon: FaBrain },
+    { to: '/auditor',           label: 'Audit Dashboard', icon: FaCheckSquare },
+    { to: '/auditor/baselines', label: 'Baselines',       icon: FaRegFileAlt },
+    { to: '/ci-registry',       label: 'CI Registry',     icon: FaLayerGroup },
   ],
   Admin: [
-    { to: '/admin', label: 'Overview', icon: FaHome },
-    { to: '/admin/reports', label: 'Reports', icon: FaChartBar },
-    { to: '/admin/users', label: 'Users', icon: FaUsers },
-    { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
+    { to: '/admin',         label: 'Overview', icon: FaHome },
+    { to: '/admin/reports', label: 'Reports',  icon: FaChartBar },
+    { to: '/admin/users',   label: 'Users',    icon: FaUsers },
   ],
 }
 
@@ -72,7 +70,7 @@ export default function Sidebar() {
                   }`
                 }
               >
-                <Icon size={16} className={({isActive}) => isActive ? 'text-primary' : 'text-textMuted/70'} />
+                <Icon size={16} className="text-current opacity-80" />
                 <span>{label}</span>
               </NavLink>
             </li>
