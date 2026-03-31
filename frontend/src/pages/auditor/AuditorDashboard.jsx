@@ -107,14 +107,34 @@ export default function AuditorDashboard() {
     <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
 
       {/* Header */}
-      <div className="mb-12 pt-8">
-        <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-3">
-          Audit Dashboard
-        </h1>
-        <p className="text-lg text-textMuted max-w-2xl leading-relaxed">
-          Full change trail visibility, compliance baseline management, and formal audit scheduling.
-        </p>
+      <div className="mb-10 pt-8 flex flex-col sm:flex-row justify-between items-start gap-6">
+        <div>
+          <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-3">
+            {isBaselinesView ? 'Baselines & Audits' : 'Audit Dashboard'}
+          </h1>
+          <p className="text-lg text-textMuted max-w-2xl leading-relaxed">
+            {isBaselinesView
+              ? 'Create configuration baselines and schedule formal compliance audits.'
+              : 'Full change trail visibility across all projects and teams.'}
+          </p>
+        </div>
+        {/* Action buttons always visible */}
+        <div className="flex gap-3 shrink-0 pt-2">
+          <button
+            className="bg-primary hover:bg-primaryHover text-white font-semibold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-2 shadow-[0_0_15px_rgba(168,127,243,0.3)]"
+            onClick={() => { setShowBaseline(s => !s); setShowAudit(false) }}
+          >
+            <FaPlus size={11} /> Snapshot Baseline
+          </button>
+          <button
+            className="bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] text-white font-semibold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-2"
+            onClick={() => { setShowAudit(s => !s); setShowBaseline(false) }}
+          >
+            <FaCheckSquare size={11} /> Schedule Audit
+          </button>
+        </div>
       </div>
+
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
@@ -142,27 +162,8 @@ export default function AuditorDashboard() {
         </div>
       )}
 
-      {/* Baselines View */}
-      {isBaselinesView ? (
-        <div className="mb-16">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h2 className="text-2xl font-bold text-white tracking-tight">Compliance Operations</h2>
-            <div className="flex gap-3">
-              <button
-                className="bg-primary hover:bg-primaryHover text-white font-semibold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-2 shadow-[0_0_15px_rgba(168,127,243,0.3)]"
-                onClick={() => { setShowBaseline(s => !s); setShowAudit(false) }}
-              >
-                <FaPlus size={11} /> Snapshot Baseline
-              </button>
-              <button
-                className="bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] text-white font-semibold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-2"
-                onClick={() => { setShowAudit(s => !s); setShowBaseline(false) }}
-              >
-                <FaCheckSquare size={11} /> Schedule Audit
-              </button>
-            </div>
-          </div>
-
+      {/* Forms — shown on both views, toggled by header buttons */}
+      <div className="mb-6">
           {/* Baseline Form */}
           {showBaseline && (
             <div className="bg-primary/5 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 sm:p-10 mb-8 relative overflow-hidden">
@@ -241,11 +242,10 @@ export default function AuditorDashboard() {
               </form>
             </div>
           )}
-        </div>
-      ) : (
+      </div>
 
-        /* Audit Dashboard — Full CR Trail */
-        <div>
+      {/* CR Audit Trail — always visible */}
+      <div>
           {/* Filters */}
           <div className="flex flex-wrap gap-3 mb-6">
             <div className="relative flex-1 min-w-[200px]">
@@ -339,7 +339,6 @@ export default function AuditorDashboard() {
           </div>
           <p className="text-xs text-zinc-600 text-right mt-3">{filtered.length} of {crs.length} records shown</p>
         </div>
-      )}
     </div>
   )
 }
