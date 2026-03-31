@@ -1,6 +1,7 @@
 const ChangeRequest = require('../models/ChangeRequest');
 const Project = require('../models/Project');
 const User = require('../models/User');
+const ConfigurationItem = require('../models/ConfigurationItem');
 const aiImpactService = require('../services/aiImpactService');
 const notificationService = require('../services/notificationService');
 const emailService = require('../services/emailService');
@@ -16,7 +17,15 @@ exports.submitCR = async (req, res) => {
       riskScore: aiAnalysis.riskScore,
       impactLevel: aiAnalysis.impactLevel,
       aiRecommendation: aiAnalysis.recommendation,
-      status: 'Submitted'
+      status: 'Submitted',
+      // Log the initial submission as the first transition entry
+      transitionHistory: [{
+        fromStatus: null,
+        toStatus: 'Submitted',
+        changedBy: req.user._id,
+        comment: 'Change request submitted',
+        changedAt: new Date()
+      }]
     });
 
     await cr.save();
@@ -89,5 +98,80 @@ exports.updateCR = async (req, res) => {
     res.json(cr);
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+/**
+ * PATCH /api/crs/:id/status
+ * Configuration Status Accounting (IEEE 828 §5.4)
+ * Records every status transition with actor + comment.
+ */
+exports.updateCRStatus = async (req, res) => {
+  try {
+    const { status, comment } = req.body;
+    const cr = await ChangeRequest.findById(req.params.id);
+    if (!cr) return res.status(404).json({ error: 'CR not found' });
+
+    const fromStatus = cr.status;
+
+    // Append transition to history log
+    cr.transitionHistory.push({
+      fromStatus,
+      toStatus: status,
+      changedBy: req.user._id,
+      comment: comment || '',
+      changedAt: new Date()
+    });
+
+    cr.status = status;
+
+    // If CR is approved, mark affected CIs as 'Under Change'
+    if (status === 'Approved' && cr.affectedCIs && cr.affectedCIs.length > 0) {
+      await ConfigurationItem.updateMany(
+        { _id: { $in: cr.affectedCIs } },
+        { $set: { status: 'Under Change' } }
+      );
+    }
+
+    await cr.save();
+
+    // Notify submitter of status change
+    await notificationService.notifyUser(
+      cr.submittedBy,
+      `CR "${cr.title}" status changed to ${status}`,
+      'CR_STATUS_CHANGED',
+      cr._id
+    ).catch(() => {}); // non-blocking
+
+    res.json(cr);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+/**
+ * GET /api/crs/status-report?project=<id>
+ * Configuration Status Accounting report (IEEE 828 §5.4)
+ */
+exports.getStatusReport = async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.project) filter.project = req.query.project;
+
+    const crs = await ChangeRequest.find(filter)
+      .populate('submittedBy', 'name')
+      .populate('project', 'name')
+      .populate('affectedCIs', 'ciId name currentVersion')
+      .select('title status priorityLevel riskScore impactLevel aiRecommendation transitionHistory affectedCIs createdAt updatedAt');
+
+    // Summarize counts by status
+    const summary = crs.reduce((acc, cr) => {
+      acc[cr.status] = (acc[cr.status] || 0) + 1;
+      return acc;
+    }, {});
+
+    res.json({ summary, crs });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

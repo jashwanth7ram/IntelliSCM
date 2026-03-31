@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
   FaHome, FaCodeBranch, FaFolderOpen, FaShieldAlt,
-  FaCheckSquare, FaChartBar, FaUsers, FaSignOutAlt, FaBrain, FaRegFileAlt, FaCube
+  FaCheckSquare, FaChartBar, FaUsers, FaSignOutAlt, FaBrain, FaRegFileAlt, FaCube, FaLayerGroup
 } from 'react-icons/fa'
 
 const ROLE_NAV = {
@@ -12,18 +12,20 @@ const ROLE_NAV = {
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   'Project Manager': [
-    { to: '/pm', label: 'Dashboard', icon: FaHome },
-    { to: '/pm/projects', label: 'Projects', icon: FaFolderOpen },
-    { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
+    { to: '/pm',             label: 'Dashboard',   icon: FaHome },
+    { to: '/pm/projects',   label: 'Projects',    icon: FaFolderOpen },
+    { to: '/ci-registry',   label: 'CI Registry', icon: FaLayerGroup },
+    { to: '/ml-insights',   label: 'ML Insights', icon: FaBrain },
   ],
   'CCB Member': [
     { to: '/ccb', label: 'CCB Board', icon: FaShieldAlt },
     { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
   ],
   Auditor: [
-    { to: '/auditor', label: 'Audits', icon: FaCheckSquare },
-    { to: '/auditor/baselines', label: 'Baselines', icon: FaRegFileAlt },
-    { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
+    { to: '/auditor',          label: 'Audits',      icon: FaCheckSquare },
+    { to: '/auditor/baselines',label: 'Baselines',   icon: FaRegFileAlt },
+    { to: '/ci-registry',      label: 'CI Registry', icon: FaLayerGroup },
+    { to: '/ml-insights',      label: 'ML Insights', icon: FaBrain },
   ],
   Admin: [
     { to: '/admin', label: 'Overview', icon: FaHome },

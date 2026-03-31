@@ -26,6 +26,25 @@ export default function AdminDashboard() {
   useEffect(() => {
     Promise.all([
       crsAPI.list(),
+
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       usersAPI.list()
     ])
     .then(([crsRes, usersRes]) => {

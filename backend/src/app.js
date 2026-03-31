@@ -15,6 +15,7 @@ const baselineRoutes = require('./routes/baselineRoutes');
 const auditRoutes = require('./routes/auditRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const ciRoutes = require('./routes/ciRoutes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/api/baselines', baselineRoutes);
 app.use('/api/audits', auditRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/cis', ciRoutes);
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)

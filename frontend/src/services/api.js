@@ -44,8 +44,10 @@ export const projectsAPI = {
 
 // ─── Change Requests ────────────────────────────────
 export const crsAPI = {
-  list:   () => api.get('/crs'),
-  create: (data) => api.post('/crs', data),
+  list:         ()         => api.get('/crs'),
+  create:       (data)     => api.post('/crs', data),
+  updateStatus: (id, data) => api.patch(`/crs/${id}/status`, data),
+  statusReport: (projectId) => api.get(`/crs/status-report${projectId ? `?project=${projectId}` : ''}`),
 }
 
 // ─── CCB ────────────────────────────────────────────
@@ -66,6 +68,17 @@ export const auditsAPI = {
 // ─── Reports ────────────────────────────────────────
 export const reportsAPI = {
   changeActivity: () => api.get('/reports?reportType=change_activity'),
+}
+
+// ─── CI Registry (IEEE 828 §5.2) ────────────────────
+export const cisAPI = {
+  list:        (params)       => api.get('/cis', { params }),
+  getById:     (id)           => api.get(`/cis/${id}`),
+  create:      (data)         => api.post('/cis', data),
+  update:      (id, data)     => api.patch(`/cis/${id}`, data),
+  bumpVersion: (id, data)     => api.post(`/cis/${id}/version-bump`, data),
+  archive:     (id)           => api.delete(`/cis/${id}`),
+  stats:       (projectId)    => api.get(`/cis/stats/${projectId}`),
 }
 
 export default api

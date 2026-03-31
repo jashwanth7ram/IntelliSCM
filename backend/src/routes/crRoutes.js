@@ -143,6 +143,10 @@ router.get('/', crController.getCRs);
  *       404:
  *         description: CR not found
  */
+router.get('/status-report', crController.getStatusReport);
 router.get('/:id', crController.getCRById);
+
+// PATCH /api/crs/:id/status  — Status Accounting transition log (IEEE 828 §5.4)
+router.patch('/:id/status', roleMiddleware(['CCB Member', 'Project Manager', 'Admin']), crController.updateCRStatus);
 
 module.exports = router;

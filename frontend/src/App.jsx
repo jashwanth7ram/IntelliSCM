@@ -15,6 +15,7 @@ import CCBDashboard       from './pages/ccb/CCBDashboard'
 import AuditorDashboard   from './pages/auditor/AuditorDashboard'
 import AdminDashboard     from './pages/admin/AdminDashboard'
 import MLInsights         from './pages/MLInsights'
+import CIRegistry         from './pages/ci/CIRegistry'
 
 function AppLayout({ children }) {
   const { user } = useAuth()
@@ -126,6 +127,13 @@ export default function App() {
             <Route path="/ml-insights" element={
               <ProtectedRoute allowedRoles={['Developer','Project Manager','CCB Member','Auditor','Admin']}>
                 <MLInsights />
+              </ProtectedRoute>
+            } />
+
+            {/* CI Registry — IEEE 828 §5.2 — PM, Auditor, Admin */}
+            <Route path="/ci-registry" element={
+              <ProtectedRoute allowedRoles={['Project Manager','Auditor','Admin']}>
+                <CIRegistry />
               </ProtectedRoute>
             } />
 
