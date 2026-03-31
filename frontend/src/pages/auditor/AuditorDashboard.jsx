@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { baselinesAPI, auditsAPI, crsAPI, projectsAPI } from '../../services/api'
-import { FaCheckSquare, FaPlus, FaSearch, FaShieldAlt, FaCodeBranch, FaRegFileAlt } from 'react-icons/fa'
+import { FaCheckSquare, FaSearch, FaShieldAlt, FaCodeBranch, FaRegFileAlt } from 'react-icons/fa'
 
 const AUDIT_TYPES = ['FCA', 'PCA']
 
@@ -26,17 +26,20 @@ export default function AuditorDashboard() {
   const [loading, setLoading]   = useState(true)
   const [msg, setMsg]           = useState({ type: '', text: '' })
 
-  // Filters (only for CR view)
-  const [search, setSearch]             = useState('')
-  const [filterStatus, setFilterStatus] = useState('')
+  // Which form is open on the Baselines page: null | 'baseline' | 'audit'
+  const [activeForm, setActiveForm] = useState(null)
+
+  // Filters (CR view)
+  const [search, setSearch]               = useState('')
+  const [filterStatus, setFilterStatus]   = useState('')
   const [filterProject, setFilterProject] = useState('')
 
-  // Baseline form state
+  // Baseline form
   const [baseline, setBaseline] = useState({ versionNumber: '', description: '', project: '' })
   const [bLoading, setBLoading] = useState(false)
 
-  // Audit form state
-  const [audit, setAudit]   = useState({ auditType: 'FCA', auditDate: '', notes: '', project: '' })
+  // Audit form
+  const [audit, setAudit]     = useState({ auditType: 'FCA', auditDate: '', notes: '', project: '' })
   const [aLoading, setALoading] = useState(false)
 
   useEffect(() => {
@@ -60,6 +63,7 @@ export default function AuditorDashboard() {
       await baselinesAPI.create(baseline)
       flash('success', '✓ Baseline committed successfully.')
       setBaseline({ versionNumber: '', description: '', project: '' })
+      setActiveForm(null)
     } catch (err) {
       flash('error', err.response?.data?.error || 'Failed to create baseline.')
     } finally { setBLoading(false) }
@@ -72,6 +76,7 @@ export default function AuditorDashboard() {
       await auditsAPI.create({ ...rest, complianceNotes: notes })
       flash('success', '✓ Audit scheduled successfully.')
       setAudit({ auditType: 'FCA', auditDate: '', notes: '', project: '' })
+      setActiveForm(null)
     } catch (err) {
       flash('error', err.response?.data?.error || err.response?.data?.message || 'Failed to schedule audit.')
     } finally { setALoading(false) }
@@ -89,10 +94,10 @@ export default function AuditorDashboard() {
     return matchSearch && matchStatus && matchProject
   })
 
-  // ─── BASELINES VIEW ───────────────────────────────────────────
+  // ─── BASELINES PAGE ────────────────────────────────────────────
   if (isBaselinesView) {
     return (
-      <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1200px] mx-auto">
+      <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1100px] mx-auto">
         <div className="mb-10 pt-8">
           <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-3">Baselines & Audits</h1>
           <p className="text-lg text-textMuted leading-relaxed">Create configuration baselines and schedule formal compliance audits.</p>
@@ -104,14 +109,30 @@ export default function AuditorDashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* ── Baseline Form ── */}
-          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-56 h-56 bg-primary/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
+        {/* Toggle buttons */}
+        <div className="flex gap-4 mb-8">
+          <button
+            className={`font-semibold py-3 px-7 rounded-xl transition-all text-sm flex items-center gap-2 ${activeForm === 'baseline' ? 'bg-primary text-white shadow-[0_0_15px_rgba(168,127,243,0.4)]' : 'bg-white/[0.03] border border-white/[0.08] text-textMuted hover:text-white hover:bg-white/[0.06]'}`}
+            onClick={() => setActiveForm(f => f === 'baseline' ? null : 'baseline')}
+          >
+            <FaRegFileAlt size={13} /> Snapshot Baseline
+          </button>
+          <button
+            className={`font-semibold py-3 px-7 rounded-xl transition-all text-sm flex items-center gap-2 ${activeForm === 'audit' ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-white/[0.03] border border-white/[0.08] text-textMuted hover:text-white hover:bg-white/[0.06]'}`}
+            onClick={() => setActiveForm(f => f === 'audit' ? null : 'audit')}
+          >
+            <FaShieldAlt size={13} /> Schedule Audit
+          </button>
+        </div>
+
+        {/* Baseline Form */}
+        {activeForm === 'baseline' && (
+          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8 sm:p-10 mb-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none" />
             <h2 className="text-xl font-bold text-white tracking-tight mb-6 flex items-center gap-2 relative z-10">
-              <FaRegFileAlt className="text-primary" /> Snapshot Baseline
+              <FaRegFileAlt className="text-primary" /> Create Configuration Baseline
             </h2>
-            <form onSubmit={createBaseline} className="flex flex-col gap-5 relative z-10">
+            <form onSubmit={createBaseline} className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Version Tag *</label>
                 <input type="text" className={inputCls} placeholder="e.g. v1.4.2-stable"
@@ -124,29 +145,33 @@ export default function AuditorDashboard() {
                   {projects.map(p => <option key={p._id} value={p._id} className="bg-zinc-900">{p.name}</option>)}
                 </select>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Description *</label>
-                <textarea className={`${inputCls} min-h-[80px] resize-y`}
-                  placeholder="Describe the state of this baseline..."
+                <textarea className={`${inputCls} min-h-[90px] resize-y`}
+                  placeholder="Describe the configuration state at this baseline..."
                   value={baseline.description} onChange={setB('description')} required />
               </div>
-              <button type="submit"
-                className="bg-primary hover:bg-primaryHover text-white font-semibold px-8 py-3 rounded-xl transition-all text-sm shadow-[0_0_15px_rgba(168,127,243,0.4)] disabled:opacity-50 mt-2"
-                disabled={bLoading}>
-                {bLoading ? 'Saving...' : 'Commit Baseline'}
-              </button>
+              <div className="flex gap-3 md:col-span-2">
+                <button type="submit" className="bg-primary hover:bg-primaryHover text-white font-semibold px-8 py-3 rounded-xl transition-all text-sm shadow-[0_0_15px_rgba(168,127,243,0.4)] disabled:opacity-50" disabled={bLoading}>
+                  {bLoading ? 'Saving...' : 'Commit Baseline'}
+                </button>
+                <button type="button" className="bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] text-textMuted hover:text-white font-medium px-6 py-3 rounded-xl transition-all text-sm"
+                  onClick={() => setActiveForm(null)}>Cancel</button>
+              </div>
             </form>
           </div>
+        )}
 
-          {/* ── Schedule Audit Form ── */}
-          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-56 h-56 bg-blue-500/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
+        {/* Audit Form */}
+        {activeForm === 'audit' && (
+          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8 sm:p-10 mb-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none" />
             <h2 className="text-xl font-bold text-white tracking-tight mb-6 flex items-center gap-2 relative z-10">
-              <FaShieldAlt className="text-blue-400" /> Schedule Audit
+              <FaShieldAlt className="text-blue-400" /> Schedule Compliance Audit
             </h2>
-            <form onSubmit={scheduleAudit} className="flex flex-col gap-5 relative z-10">
+            <form onSubmit={scheduleAudit} className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Audit Type *</label>
+                <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Audit Type</label>
                 <select className={selectCls} value={audit.auditType} onChange={setA('auditType')}>
                   {AUDIT_TYPES.map(t => <option key={t} className="bg-zinc-900">{t}</option>)}
                 </select>
@@ -160,7 +185,6 @@ export default function AuditorDashboard() {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Audit Date *</label>
-                {/* colorScheme: dark fixes the native date picker on dark backgrounds */}
                 <input
                   type="date"
                   className={inputCls}
@@ -173,23 +197,30 @@ export default function AuditorDashboard() {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Compliance Notes</label>
-                <textarea className={`${inputCls} min-h-[60px] resize-y`}
-                  placeholder="Objectives of this audit..."
+                <input type="text" className={inputCls} placeholder="Audit objectives..."
                   value={audit.notes} onChange={setA('notes')} />
               </div>
-              <button type="submit"
-                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-8 py-3 rounded-xl transition-all text-sm shadow-[0_0_15px_rgba(59,130,246,0.3)] disabled:opacity-50 mt-2"
-                disabled={aLoading}>
-                {aLoading ? 'Scheduling...' : 'Schedule Audit'}
-              </button>
+              <div className="flex gap-3 md:col-span-2">
+                <button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-8 py-3 rounded-xl transition-all text-sm shadow-[0_0_15px_rgba(59,130,246,0.3)] disabled:opacity-50" disabled={aLoading}>
+                  {aLoading ? 'Scheduling...' : 'Confirm Audit Date'}
+                </button>
+                <button type="button" className="bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] text-textMuted hover:text-white font-medium px-6 py-3 rounded-xl transition-all text-sm"
+                  onClick={() => setActiveForm(null)}>Cancel</button>
+              </div>
             </form>
           </div>
-        </div>
+        )}
+
+        {!activeForm && (
+          <div className="bg-white/[0.02] border border-white/[0.04] rounded-2xl flex items-center justify-center py-20">
+            <p className="text-sm text-white/30">Select an action above to get started.</p>
+          </div>
+        )}
       </div>
     )
   }
 
-  // ─── AUDIT DASHBOARD VIEW (CR Trail) ──────────────────────────
+  // ─── AUDIT DASHBOARD (CR trail) ────────────────────────────────
   return (
     <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
       <div className="mb-10 pt-8">
