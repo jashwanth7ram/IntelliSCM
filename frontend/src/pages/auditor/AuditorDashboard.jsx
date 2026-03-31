@@ -39,7 +39,7 @@ export default function AuditorDashboard() {
   const [bLoading, setBLoading] = useState(false)
 
   // Audit form
-  const [audit, setAudit]     = useState({ auditType: 'FCA', auditDate: '', notes: '', project: '' })
+  const [audit, setAudit]     = useState({ auditType: 'FCA', auditDate: '', auditLocation: '', notes: '', project: '' })
   const [aLoading, setALoading] = useState(false)
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function AuditorDashboard() {
       const { notes, ...rest } = audit
       await auditsAPI.create({ ...rest, complianceNotes: notes })
       flash('success', '✓ Audit scheduled successfully.')
-      setAudit({ auditType: 'FCA', auditDate: '', notes: '', project: '' })
+      setAudit({ auditType: 'FCA', auditDate: '', auditLocation: '', notes: '', project: '' })
       setActiveForm(null)
     } catch (err) {
       flash('error', err.response?.data?.error || err.response?.data?.message || 'Failed to schedule audit.')
@@ -196,8 +196,13 @@ export default function AuditorDashboard() {
                 />
               </div>
               <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Audit Location</label>
+                <input type="text" className={inputCls} placeholder="e.g. Conference Room B, Floor 3"
+                  value={audit.auditLocation} onChange={setA('auditLocation')} />
+              </div>
+              <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-xs font-semibold text-textMuted uppercase tracking-wider">Compliance Notes</label>
-                <input type="text" className={inputCls} placeholder="Audit objectives..."
+                <input type="text" className={inputCls} placeholder="Audit objectives or scope..."
                   value={audit.notes} onChange={setA('notes')} />
               </div>
               <div className="flex gap-3 md:col-span-2">

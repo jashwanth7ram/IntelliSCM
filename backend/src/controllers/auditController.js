@@ -11,9 +11,10 @@ exports.scheduleAudit = async (req, res) => {
     await audit.save();
 
     // Notify project stakeholders + all CCB Members
+    const locationText = audit.auditLocation ? ` at ${audit.auditLocation}` : ''
     notificationService.notifyAuditStakeholders(
       audit.project,
-      `📋 New ${audit.auditType} Audit scheduled on ${new Date(audit.auditDate).toDateString()} — please prepare documentation.`,
+      `📋 New ${audit.auditType} Audit scheduled on ${new Date(audit.auditDate).toDateString()}${locationText} — please prepare documentation.`,
       'AUDIT_SCHEDULED',
       audit._id
     ).catch(err => console.error('[auditController] notification failed:', err));

@@ -5,10 +5,11 @@ const auditSchema = new mongoose.Schema({
   auditor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   auditType: { 
     type: String, 
-    enum: ['FCA', 'PCA'], // Functional Configuration Audit / Physical Configuration Audit
+    enum: ['FCA', 'PCA'],
     required: true
   },
   auditDate: { type: Date, required: true },
+  auditLocation: { type: String, default: '' },
   auditReportUrl: { type: String },
   complianceNotes: { type: String }
 }, { timestamps: true });
