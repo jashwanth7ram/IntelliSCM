@@ -147,6 +147,13 @@ router.get('/', crController.getCRs);
  *         description: CR not found
  */
 router.get('/status-report', crController.getStatusReport);
+router.get('/change-calendar', crController.getChangeCalendar);
 router.get('/:id', crController.getCRById);
+
+// Modern SCM features (Comments & Labels)
+router.post('/:id/comments', crController.addComment);
+router.put('/:id/labels', crController.updateLabels);
+router.post('/:id/commits', crController.addCommit);
+router.patch('/:id/repo-tree', crController.setRepoTree);
 
 module.exports = router;

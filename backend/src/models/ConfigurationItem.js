@@ -20,6 +20,12 @@ const configurationItemSchema = new mongoose.Schema({
     enum: ['Active', 'Deprecated', 'Archived', 'Under Change'],
     default: 'Active'
   },
+  complianceStatus: {
+    type: String,
+    enum: ['Compliant', 'Non-Compliant', 'Pending Audit'],
+    default: 'Pending Audit'
+  },
+  lastAuditedAt: { type: Date },
   description: { type: String },
   filePath: { type: String }, // relative path in repository
   parentCI: { type: mongoose.Schema.Types.ObjectId, ref: 'ConfigurationItem' }, // for nested CIs
@@ -37,7 +43,7 @@ const configurationItemSchema = new mongoose.Schema({
 // Auto-generate ciId before saving if not set (Mongoose 9: async hooks resolve via Promise, no next())
 configurationItemSchema.pre('validate', async function () {
   if (!this.ciId) {
-    const count = await mongoose.model('ConfigurationItem').countDocuments({ project: this.project });
+    const count = await mongoose.model('ConfigurationItem').countDocuments({});
     this.ciId = `CI-${String(count + 1).padStart(3, '0')}`;
   }
 });

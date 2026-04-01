@@ -44,10 +44,17 @@ export const projectsAPI = {
 
 // ─── Change Requests ────────────────────────────────
 export const crsAPI = {
-  list:         ()         => api.get('/crs'),
-  create:       (data)     => api.post('/crs', data),
-  updateStatus: (id, data) => api.patch(`/crs/${id}/status`, data),
-  statusReport: (projectId) => api.get(`/crs/status-report${projectId ? `?project=${projectId}` : ''}`),
+  list:            ()           => api.get('/crs'),
+  listByProject:   (projectId)  => api.get(`/crs?project=${projectId}`),
+  getById:         (id)         => api.get(`/crs/${id}`),
+  create:          (data)       => api.post('/crs', data),
+  updateStatus:    (id, data)   => api.patch(`/crs/${id}/status`, data),
+  addComment:      (id, data)   => api.post(`/crs/${id}/comments`, data),
+  updateLabels:    (id, data)   => api.put(`/crs/${id}/labels`, data),
+  changeCalendar:  (params)     => api.get('/crs/change-calendar', { params }),
+  statusReport:    (projectId)  => api.get(`/crs/status-report${projectId ? `?project=${projectId}` : ''}`),
+  addCommit:       (id, data)   => api.post(`/crs/${id}/commits`, data),
+  setRepoTree:     (id, data)   => api.patch(`/crs/${id}/repo-tree`, data),
 }
 
 // ─── CCB ────────────────────────────────────────────
@@ -76,18 +83,58 @@ export const notificationsAPI = {
 
 // ─── Reports ────────────────────────────────────────
 export const reportsAPI = {
-  changeActivity: () => api.get('/reports?reportType=change_activity'),
+  changeActivity: ()       => api.get('/reports?reportType=change_activity'),
+  routine:        (params) => api.get('/reports/routine', { params }),
+}
+
+export const activityAPI = {
+  list: () => api.get('/activity'),
+}
+
+// ─── DevOps (pipelines, releases, deployments, metrics) ─────────────
+export const devopsAPI = {
+  metrics: (params) => api.get('/devops/metrics', { params }),
+  trace:   (crId)    => api.get(`/devops/trace/${crId}`),
+}
+
+export const pipelinesAPI = {
+  listDefinitions: (params) => api.get('/pipelines/definitions', { params }),
+  createDefinition: (data)   => api.post('/pipelines/definitions', data),
+  listRuns:        (params)   => api.get('/pipelines/runs', { params }),
+  getRun:          (id)       => api.get(`/pipelines/runs/${id}`),
+  startRun:        (data)     => api.post('/pipelines/runs/start', data),
+  advanceRun:      (id, data) => api.post(`/pipelines/runs/${id}/advance`, data),
+  simulateSuccess: (id)      => api.post(`/pipelines/runs/${id}/simulate-success`),
+}
+
+export const releasesAPI = {
+  list:            (params)   => api.get('/releases', { params }),
+  create:          (data)     => api.post('/releases', data),
+  getById:         (id)       => api.get(`/releases/${id}`),
+  updateCRs:       (id, changeRequestIds) => api.patch(`/releases/${id}/crs`, { changeRequestIds }),
+  generateNotes:   (id)       => api.post(`/releases/${id}/release-notes`),
+  submitApproval:  (id)       => api.post(`/releases/${id}/submit-approval`),
+  approve:         (id)       => api.post(`/releases/${id}/approve`),
+  markReleased:    (id)       => api.post(`/releases/${id}/mark-released`),
+}
+
+export const deploymentsAPI = {
+  list:       (params) => api.get('/deployments', { params }),
+  create:     (data)   => api.post('/deployments', data),
+  updateStatus: (id, data) => api.patch(`/deployments/${id}/status`, data),
+  envSummary: (params) => api.get('/deployments/summary/env', { params }),
 }
 
 // ─── CI Registry (IEEE 828 §5.2) ────────────────────
 export const cisAPI = {
-  list:        (params)       => api.get('/cis', { params }),
-  getById:     (id)           => api.get(`/cis/${id}`),
-  create:      (data)         => api.post('/cis', data),
-  update:      (id, data)     => api.patch(`/cis/${id}`, data),
-  bumpVersion: (id, data)     => api.post(`/cis/${id}/version-bump`, data),
-  archive:     (id)           => api.delete(`/cis/${id}`),
-  stats:       (projectId)    => api.get(`/cis/stats/${projectId}`),
+  list:          (params)       => api.get('/cis', { params }),
+  listByProject: (projectId)    => api.get('/cis', { params: { project: projectId } }),
+  getById:       (id)           => api.get(`/cis/${id}`),
+  create:        (data)         => api.post('/cis', data),
+  update:        (id, data)     => api.patch(`/cis/${id}`, data),
+  bumpVersion:   (id, data)     => api.post(`/cis/${id}/version-bump`, data),
+  archive:       (id)           => api.delete(`/cis/${id}`),
+  stats:         (projectId)    => api.get(`/cis/stats/${projectId}`),
 }
 
 export default api

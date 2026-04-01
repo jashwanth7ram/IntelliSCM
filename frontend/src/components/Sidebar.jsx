@@ -5,34 +5,48 @@ import { notificationsAPI } from '../services/api'
 import {
   FaHome, FaCodeBranch, FaFolderOpen, FaShieldAlt,
   FaCheckSquare, FaChartBar, FaUsers, FaSignOutAlt,
-  FaBrain, FaRegFileAlt, FaCube, FaLayerGroup, FaBell
+  FaBrain, FaRegFileAlt, FaCube, FaLayerGroup, FaBell, FaHistory, FaTrello, FaRocket
 } from 'react-icons/fa'
 
 const ROLE_NAV = {
   Developer: [
-    { to: '/developer',           label: 'Dashboard',   icon: FaHome },
-    { to: '/developer/submit-cr', label: 'Submit CR',   icon: FaCodeBranch },
-    { to: '/ml-insights',         label: 'ML Insights', icon: FaBrain },
+    { to: '/developer',           label: 'Dashboard',    icon: FaHome },
+    { to: '/developer/submit-cr', label: 'Submit CR',    icon: FaCodeBranch },
+    { to: '/kanban',              label: 'Kanban Board', icon: FaTrello },
+    { to: '/devops',              label: 'DevOps',       icon: FaRocket },
+    { to: '/activity',            label: 'Activity Hub', icon: FaHistory },
+    { to: '/ml-insights',         label: 'ML Insights',  icon: FaBrain },
   ],
   'Project Manager': [
-    { to: '/pm',          label: 'Dashboard',   icon: FaHome },
-    { to: '/pm/projects', label: 'Projects',    icon: FaFolderOpen },
-    { to: '/ci-registry', label: 'CI Registry', icon: FaLayerGroup },
-    { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
+    { to: '/pm',          label: 'Dashboard',    icon: FaHome },
+    { to: '/pm/projects', label: 'Projects',     icon: FaFolderOpen },
+    { to: '/ci-registry', label: 'CI Registry',  icon: FaLayerGroup },
+    { to: '/kanban',      label: 'Kanban Board', icon: FaTrello },
+    { to: '/devops',      label: 'DevOps',       icon: FaRocket },
+    { to: '/activity',    label: 'Activity Hub', icon: FaHistory },
+    { to: '/ml-insights', label: 'ML Insights',  icon: FaBrain },
   ],
   'CCB Member': [
-    { to: '/ccb',         label: 'CCB Board',   icon: FaShieldAlt },
-    { to: '/ml-insights', label: 'ML Insights', icon: FaBrain },
+    { to: '/ccb',         label: 'CCB Board',    icon: FaShieldAlt },
+    { to: '/kanban',      label: 'Kanban Board', icon: FaTrello },
+    { to: '/devops',      label: 'DevOps',       icon: FaRocket },
+    { to: '/activity',    label: 'Activity Hub', icon: FaHistory },
+    { to: '/ml-insights', label: 'ML Insights',  icon: FaBrain },
   ],
   Auditor: [
     { to: '/auditor',           label: 'Audit Dashboard', icon: FaCheckSquare },
     { to: '/auditor/baselines', label: 'Baselines',       icon: FaRegFileAlt },
+    { to: '/auditor/reports',   label: 'Routine Reports', icon: FaChartBar   },
     { to: '/ci-registry',       label: 'CI Registry',     icon: FaLayerGroup },
+    { to: '/devops',            label: 'DevOps',          icon: FaRocket },
+    { to: '/activity',          label: 'Activity Hub',    icon: FaHistory },
   ],
   Admin: [
-    { to: '/admin',         label: 'Overview', icon: FaHome },
-    { to: '/admin/reports', label: 'Reports',  icon: FaChartBar },
-    { to: '/admin/users',   label: 'Users',    icon: FaUsers },
+    { to: '/admin',         label: 'Overview',     icon: FaHome },
+    { to: '/admin/reports', label: 'Reports',      icon: FaChartBar },
+    { to: '/admin/users',   label: 'Users',        icon: FaUsers },
+    { to: '/devops',        label: 'DevOps',       icon: FaRocket },
+    { to: '/activity',      label: 'Activity Hub', icon: FaHistory },
   ],
 }
 
@@ -41,6 +55,17 @@ const TYPE_COLORS = {
   CR_APPROVED:     'bg-emerald-500',
   CR_REJECTED:     'bg-red-500',
   BASELINE_CREATED:'bg-purple-500',
+  CR_SUBMITTED:    'bg-cyan-500',
+  CR_STATUS_CHANGED: 'bg-amber-500',
+  PIPELINE_STARTED: 'bg-sky-500',
+  PIPELINE_FAILED: 'bg-red-600',
+  PIPELINE_SUCCEEDED: 'bg-emerald-600',
+  DEPLOY_STARTED: 'bg-indigo-500',
+  DEPLOY_SUCCEEDED: 'bg-teal-500',
+  DEPLOY_FAILED: 'bg-rose-600',
+  RELEASE_PENDING_APPROVAL: 'bg-orange-500',
+  RELEASE_APPROVED: 'bg-green-600',
+  HIGH_RISK_CR_FLAGGED: 'bg-red-500',
 }
 
 export default function Sidebar() {

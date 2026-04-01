@@ -1,0 +1,12 @@
+{
+  "name": "intelliscm",
+  "private": true,
+  "description": "IntelliSCM — start backend, frontend, and ML service together",
+  "scripts": {
+    "start": "concurrently -n backend,frontend,ml -c blue,green,magenta \"npm run dev --prefix backend\" \"npm run dev --prefix frontend -- --host localhost --port 5173\" \"npm run start:ml\"",
+    "start:ml": "bash scripts/run-ml.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

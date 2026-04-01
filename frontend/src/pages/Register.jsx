@@ -21,7 +21,8 @@ export default function Register() {
     setError(''); setLoading(true)
     try {
       await register(form)
-      navigate('/login')
+      // Session is created on register — go home so role redirect sends user to the right dashboard
+      navigate('/', { replace: true })
     } catch (err) {
       setError(err.response?.data?.message || 'Registration sequence failed.')
     } finally { setLoading(false) }

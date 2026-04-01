@@ -55,7 +55,8 @@ router.use(authMiddleware);
  *       403:
  *         description: Forbidden (Role restricted)
  */
-// Restrict reporting to PMs, Auditors, and Admins
-router.get('/', roleMiddleware(['Project Manager', 'Auditor', 'Admin']), reportController.generateReport);
+// Restrict reporting to PMs, Auditors, Admins and CCB
+router.get('/', roleMiddleware(['Project Manager', 'Auditor', 'Admin', 'CCB Member']), reportController.generateReport);
+router.get('/routine', roleMiddleware(['Project Manager', 'Auditor', 'Admin', 'CCB Member']), reportController.getRoutineReport);
 
 module.exports = router;

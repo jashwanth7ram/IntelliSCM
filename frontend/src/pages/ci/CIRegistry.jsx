@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { cisAPI, projectsAPI } from '../../services/api'
 import {
   FaLayerGroup, FaPlus, FaSearch, FaHistory, FaArchive,
@@ -95,7 +95,7 @@ export default function CIRegistry() {
   }
 
   return (
-    <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto">
+    <div className="fade-in pb-12 font-sans px-4 sm:px-8 max-w-[1400px] mx-auto w-full min-w-0">
 
       {/* Header */}
       <div className="mb-12 pt-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
@@ -263,8 +263,8 @@ export default function CIRegistry() {
         </select>
       </div>
 
-      {/* CI Table */}
-      <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl overflow-hidden">
+      {/* CI Table — min-w-0 + overflow-x-auto so wide tables scroll inside flex layout */}
+      <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-2xl min-w-0 max-w-full">
         {loading ? (
           <div className="flex justify-center items-center py-24">
             <span className="loading loading-spinner text-primary loading-lg" />
@@ -277,8 +277,8 @@ export default function CIRegistry() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full whitespace-nowrap text-left">
+          <div className="w-full max-w-full overflow-x-scroll sm:overflow-x-auto overscroll-x-contain touch-pan-x rounded-2xl [-webkit-overflow-scrolling:touch]">
+            <table className="min-w-[920px] w-full text-left whitespace-nowrap">
               <thead>
                 <tr className="border-b border-white/[0.05] text-xs font-semibold text-textMuted uppercase tracking-wider bg-white/[0.01]">
                   <th className="px-6 py-4">CI ID</th>
@@ -296,9 +296,8 @@ export default function CIRegistry() {
                   const TypeIcon = TYPE_ICONS[ci.type] || FaFileCode
                   const isExpanded = expandedCI === ci._id
                   return (
-                    <>
+                    <Fragment key={ci._id}>
                       <tr
-                        key={ci._id}
                         className="hover:bg-white/[0.02] transition-colors group cursor-pointer"
                         onClick={() => setExpandedCI(isExpanded ? null : ci._id)}
                       >
@@ -392,7 +391,7 @@ export default function CIRegistry() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   )
                 })}
               </tbody>
@@ -401,8 +400,11 @@ export default function CIRegistry() {
         )}
       </div>
 
-      <p className="text-xs text-zinc-600 text-right mt-3">
-        {filtered.length} of {cis.length} configuration items shown
+      <p className="text-xs text-zinc-600 text-right mt-3 flex flex-col sm:flex-row sm:justify-end sm:items-center gap-1 sm:gap-3">
+        <span className="text-zinc-500 sm:order-2">{filtered.length} of {cis.length} configuration items shown</span>
+        {filtered.length > 0 && (
+          <span className="text-zinc-600 sm:order-1">Scroll horizontally if columns are clipped.</span>
+        )}
       </p>
     </div>
   )

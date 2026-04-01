@@ -112,14 +112,15 @@ exports.archiveCI = async (req, res) => {
 exports.getCIStats = async (req, res) => {
   try {
     const projectId = req.params.projectId;
+    const castedProjectId = new mongoose.Types.ObjectId(projectId);
     const [total, byType, byStatus] = await Promise.all([
-      ConfigurationItem.countDocuments({ project: projectId }),
+      ConfigurationItem.countDocuments({ project: castedProjectId }),
       ConfigurationItem.aggregate([
-        { $match: { project: new mongoose.Types.ObjectId(projectId) } },
+        { $match: { project: castedProjectId } },
         { $group: { _id: '$type', count: { $sum: 1 } } }
       ]),
       ConfigurationItem.aggregate([
-        { $match: { project: new mongoose.Types.ObjectId(projectId) } },
+        { $match: { project: castedProjectId } },
         { $group: { _id: '$status', count: { $sum: 1 } } }
       ])
     ]);

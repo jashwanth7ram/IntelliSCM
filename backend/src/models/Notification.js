@@ -12,7 +12,16 @@ const notificationSchema = new mongoose.Schema({
       'CR_STATUS_CHANGED',
       'CR_NEEDS_MODIFICATION',
       'BASELINE_CREATED', 
-      'AUDIT_SCHEDULED'
+      'AUDIT_SCHEDULED',
+      'PIPELINE_STARTED',
+      'PIPELINE_FAILED',
+      'PIPELINE_SUCCEEDED',
+      'DEPLOY_STARTED',
+      'DEPLOY_SUCCEEDED',
+      'DEPLOY_FAILED',
+      'RELEASE_PENDING_APPROVAL',
+      'RELEASE_APPROVED',
+      'HIGH_RISK_CR_FLAGGED',
     ],
     required: true
   },

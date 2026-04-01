@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { baselinesAPI, auditsAPI, crsAPI, projectsAPI } from '../../services/api'
-import { FaSearch, FaShieldAlt, FaCodeBranch, FaRegFileAlt } from 'react-icons/fa'
+import { FaSearch, FaShieldAlt, FaCodeBranch, FaRegFileAlt, FaExclamationTriangle, FaCheckCircle, FaClock } from 'react-icons/fa'
+import { cisAPI } from '../../services/api'
 
 const AUDIT_TYPES = ['FCA', 'PCA']
 
@@ -24,6 +25,7 @@ export default function AuditorDashboard() {
   // Shared data
   const [crs, setCrs]         = useState([])
   const [projects, setProjects] = useState([])
+  const [cis, setCis]           = useState([])
   const [loading, setLoading]   = useState(true)
   const [msg, setMsg]           = useState({ type: '', text: '' })
 
@@ -53,8 +55,8 @@ export default function AuditorDashboard() {
       .catch(() => {})
 
   useEffect(() => {
-    Promise.all([crsAPI.list(), projectsAPI.list()])
-      .then(([c, p]) => { setCrs(c.data || []); setProjects(p.data || []) })
+    Promise.all([crsAPI.list(), projectsAPI.list(), cisAPI.list()])
+      .then(([c, p, ci]) => { setCrs(c.data || []); setProjects(p.data || []); setCis(ci.data || []) })
       .catch(() => flash('error', 'Failed to load data.'))
       .finally(() => setLoading(false))
     loadHistory()
@@ -350,6 +352,63 @@ export default function AuditorDashboard() {
             <div className="text-xs font-medium text-textMuted uppercase tracking-wider">{s.label}</div>
           </div>
         ))}
+      </div>
+
+      {/* Audit Gap Analysis Widget (Competitive Feature) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        <div className="lg:col-span-2 bg-black/40 backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-[60px] -mr-10 -mt-10 pointer-events-none" />
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+             <FaExclamationTriangle className="text-amber-500" />
+             Compliance Gap Analysis
+          </h2>
+          <div className="space-y-4">
+             {cis.filter(ci => ci.complianceStatus !== 'Compliant').slice(0, 5).map(ci => (
+               <div key={ci._id} className="flex items-center justify-between p-4 bg-white/[0.03] rounded-2xl border border-white/[0.05] hover:bg-white/[0.06] transition-colors">
+                  <div className="flex items-center gap-4">
+                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20 font-bold text-xs uppercase">
+                        {ci.type?.slice(0, 2) || 'CI'}
+                     </div>
+                     <div>
+                        <p className="text-sm font-semibold text-white">{ci.name}</p>
+                        <p className="text-[10px] text-zinc-500 font-mono tracking-tighter">{ci.ciId} • {ci.project?.name}</p>
+                     </div>
+                  </div>
+                  <div className="text-right">
+                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase`}>
+                        {ci.complianceStatus}
+                     </span>
+                     <p className="text-[10px] text-zinc-600 mt-1">Pending since {ci.lastAuditedAt ? new Date(ci.lastAuditedAt).toLocaleDateString() : 'Initial Baseline'}</p>
+                  </div>
+               </div>
+             ))}
+             {cis.filter(ci => ci.complianceStatus !== 'Compliant').length === 0 && (
+                <div className="py-8 text-center bg-white/[0.01] rounded-2xl border border-dashed border-white/[0.05]">
+                   <FaCheckCircle className="mx-auto text-emerald-500/30 mb-2" size={24} />
+                   <p className="text-xs text-white/20 italic">Global Compliance Achieved. No items overdue.</p>
+                </div>
+             )}
+          </div>
+        </div>
+
+        <div className="bg-black/40 backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 flex flex-col justify-center items-center text-center">
+            <div className="w-24 h-24 rounded-full border-[8px] border-emerald-500/20 border-t-emerald-500 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+               <span className="text-2xl font-black text-white">
+                  {Math.round((cis.filter(ci => ci.complianceStatus === 'Compliant').length / (cis.length || 1)) * 100)}%
+               </span>
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Audit Readiness</h3>
+            <p className="text-xs text-textMuted max-w-[200px]">Percentage of Configuration Items verified in current project cycle.</p>
+            <div className="mt-8 w-full space-y-3">
+               <div className="flex justify-between text-[10px] font-bold uppercase text-zinc-500">
+                  <span>Baseline Coverage</span>
+                  <span>{cis.filter(ci => ci.lastAuditedAt).length}/{cis.length}</span>
+               </div>
+               <div className="w-full h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" style={{ width: `${(cis.filter(ci => ci.lastAuditedAt).length / (cis.length || 1)) * 100}%` }} />
+               </div>
+            </div>
+        </div>
       </div>
 
       {/* Filters */}
