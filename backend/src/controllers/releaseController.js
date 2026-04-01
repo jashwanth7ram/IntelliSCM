@@ -35,6 +35,9 @@ exports.getById = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { project, version, title, changeRequestIds } = req.body;
+    if (!project) {
+      return res.status(400).json({ error: 'Project is required' });
+    }
     const rel = new Release({
       project,
       version,

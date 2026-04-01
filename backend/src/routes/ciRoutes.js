@@ -24,11 +24,11 @@ router.get('/:id', ci.getCIById);
 // Create new CI — PM, Auditor, Admin only
 router.post('/', roleMiddleware(['Project Manager', 'Auditor', 'Admin']), ci.createCI);
 
+// Bump version — register before PATCH /:id so paths stay unambiguous
+router.post('/:id/version-bump', roleMiddleware(['Project Manager', 'Auditor', 'Admin']), ci.bumpVersion);
+
 // Update CI metadata
 router.patch('/:id', roleMiddleware(['Project Manager', 'Auditor', 'Admin']), ci.updateCI);
-
-// Bump version (called when a CR affecting this CI is approved)
-router.post('/:id/version-bump', roleMiddleware(['Project Manager', 'Auditor', 'Admin']), ci.bumpVersion);
 
 // Soft-delete (archive) a CI
 router.delete('/:id', roleMiddleware(['Admin']), ci.archiveCI);

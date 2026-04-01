@@ -80,7 +80,7 @@ export default function App() {
             {/* New Routes */}
             <Route path="/baselines" element={<ProtectedRoute><AuditorDashboard /></ProtectedRoute>} />
             <Route path="/audits" element={<ProtectedRoute><AuditorDashboard /></ProtectedRoute>} />
-            <Route path="/cis" element={<ProtectedRoute><CIRegistry /></ProtectedRoute>} />
+            <Route path="/cis" element={<ProtectedRoute><Navigate to="/ci-registry" replace /></ProtectedRoute>} />
             <Route path="/kanban" element={<ProtectedRoute><KanbanBoard /></ProtectedRoute>} />
             <Route path="/crs/:id" element={<ProtectedRoute><CRDetails /></ProtectedRoute>} />
             <Route path="/activity" element={<ProtectedRoute><ActivityFeed /></ProtectedRoute>} />

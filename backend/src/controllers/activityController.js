@@ -1,34 +1,43 @@
+const mongoose = require('mongoose');
 const ChangeRequest = require('../models/ChangeRequest');
-const ConfigurationItem = require('../models/ConfigurationItem');
-const Audit = require('../models/Audit');
 
 /**
  * GET /api/activity
- * Fetches recent activities across the system.
+ * Query: project=<ObjectId> — optional; when set, only CRs in that project are included.
+ * Fetches recent activities from ChangeRequest.activityLog entries.
  */
 exports.getGlobalActivity = async (req, res) => {
   try {
-    // In this simplified architecture, we aggregate activityLog from all ChangeRequests
-    // In a production system, this would be a separate Activity collection.
-    const crs = await ChangeRequest.find({})
-      .select('title activityLog')
-      .populate('activityLog.performedBy', 'name role')
-      .sort({ 'activityLog.timestamp': -1 })
-      .limit(20);
+    const filter = {};
+    if (req.query.project) {
+      if (!mongoose.Types.ObjectId.isValid(req.query.project)) {
+        return res.status(400).json({ error: 'Invalid project id' });
+      }
+      filter.project = req.query.project;
+    }
 
-    const activities = crs.flatMap(cr => 
-      cr.activityLog.map(log => ({
+    const crs = await ChangeRequest.find(filter)
+      .select('title activityLog project')
+      .populate('activityLog.performedBy', 'name role')
+      .populate('project', 'name')
+      .sort({ updatedAt: -1 })
+      .limit(200);
+
+    const activities = crs.flatMap((cr) =>
+      (cr.activityLog || []).map((log) => ({
         id: log._id,
         entityType: 'ChangeRequest',
         entityId: cr._id,
         entityTitle: cr.title,
+        projectId: cr.project?._id || cr.project,
+        projectName: cr.project?.name || null,
         action: log.action,
         user: log.performedBy,
-        timestamp: log.timestamp
+        timestamp: log.timestamp,
       }))
-    ).sort((a, b) => b.timestamp - a.timestamp);
+    ).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-    res.json(activities.slice(0, 30));
+    res.json(activities.slice(0, 80));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

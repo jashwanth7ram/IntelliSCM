@@ -88,7 +88,8 @@ export const reportsAPI = {
 }
 
 export const activityAPI = {
-  list: () => api.get('/activity'),
+  /** @param {Record<string, string>} [params] — e.g. { project: projectId } */
+  list: (params) => api.get('/activity', { params }),
 }
 
 // ─── DevOps (pipelines, releases, deployments, metrics) ─────────────

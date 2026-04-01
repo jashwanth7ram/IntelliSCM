@@ -497,14 +497,16 @@ SMTP_PASS=your_gmail_app_password
 ### Frontend (`frontend/.env`)
 ```env
 VITE_API_URL=http://localhost:5001/api
-VITE_ML_SERVICE_URL=http://localhost:8000
+VITE_ML_URL=http://localhost:8000
 ```
 
 ---
 
 ## ▶️ Running the Application
 
-Open **three terminal windows** and run each service:
+**Quick start (copy-paste setup, env vars, and troubleshooting):** see **[RUNNING.md](./RUNNING.md)**.
+
+You can also open **three terminal windows** and run each service:
 
 ### Terminal 1 — Backend API
 ```bash
